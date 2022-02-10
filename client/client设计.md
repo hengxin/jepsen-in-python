@@ -4,13 +4,15 @@
 * 持有数据库连接
 * 进行数据库相关操作
 ## client持有属性
-* ip(服务器ip)
+* hostname(服务器ip)
+* port(ssh端口号)  
 * username(登录服务器username)
 * passwd(登录服务器passwd)
 * ssh_connection(对服务器的连接)
 * db_connection(对数据库的连接)
 ## client持有函数
 * 用于初始化数据库的函数
+* 用于获取数据库连接的函数  
 * 用户销毁、清理数据库的函数  
 * 用户读、写、修改数据库数据的函数
 ## client职责

@@ -5,6 +5,7 @@
 # @File    : log_util.py
 import logging
 
+
 class log:
     def __init__(self, option):
         self.option = option
