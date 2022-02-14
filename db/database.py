@@ -15,7 +15,7 @@ class database_op:
             'wget https://storage.googleapis.com/etcd/v3.1.5/etcd-v3.1.5-linux-amd64.tar.gz',
             'tar -zxvf etcd-v3.1.5-linux-amd64.tar.gz',
             'mv etcd-v3.1.5-linux-amd64 etcd',
-            '/root/etcd/etcd --log-output stdout --name 42.192.52.249 --listen-peer-urls http://0.0.0.0:2380 --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://42.192.52.249:2379 --initial-cluster-state new --initial-advertise-peer-urls http://42.192.52.249:2380 --initial-cluster 8.133.161.48=http://8.133.161.48:2380,42.192.52.249=http://42.192.52.249:2380 >/root/etcd/etcd.log &'
+            '/root/etcd/etcd --log-output stdout --name 42.192.52.249 --listen-peer-urls http://0.0.0.0:2380 --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://42.192.52.249:2379 --initial-cluster-state new --initial-advertise-peer-urls http://42.192.52.249:2380  >/root/etcd/etcd.log &'
 
         ]
         for c in command_list:
