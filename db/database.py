@@ -4,7 +4,6 @@
 # @Email   : 2764065464@qq.com
 # @File    : database.py
 import etcd3
-import eventlet
 
 
 class database_op:
