@@ -78,6 +78,8 @@ class ClientWorker(Worker):
                     "error": traceback.format_exc() + " >> no client."
                 })
                 return op_fail
+
+            # 使用新的client再次invoke
             self.invoke(test, op)
         else:
             self.client.invoke(test, op)
@@ -126,8 +128,8 @@ def spawn_worker(test, out: queue, worker, id):
     _in = queue.Queue(maxsize=1)  # 阻塞队列
     thread_name = "jepsen worker " + str(id)
 
-    def evaluate(worker, _in: queue, _out: queue):
-        _worker = worker.open(test, id)
+    def evaluate(_worker, _in: queue, _out: queue):
+        _worker = _worker.open(test, id)
         exit_flag = False
         while True:
             if exit_flag:
@@ -149,7 +151,7 @@ def spawn_worker(test, out: queue, worker, id):
                         logging.info(str(op))
                         _out.put(op)
 
-                        op2 = worker.invoke(test, op)
+                        op2 = _worker.invoke(test, op)
                         _out.put(op2)
                         logging.info(str(op2))
                         exit_flag = False
@@ -165,7 +167,7 @@ def spawn_worker(test, out: queue, worker, id):
                 })
 
             finally:
-                worker.close(test)
+                _worker.close(test)
 
     # 具体实现待确定
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)
