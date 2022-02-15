@@ -4,6 +4,7 @@
 # @Email   : 2764065464@qq.com
 # @File    : database.py
 import etcd3
+import eventlet
 
 
 class database_op:
@@ -23,7 +24,11 @@ class database_op:
         ]
         for c in command_list:
             stdin, stdout, stderr = self.ssh_connection.exec_command(c)
-            print(stdout.readlines())
+            i = stdout.readline()
+           # print('{} started'.format(c))
+            while i != '':
+                i = stdout.readline()
+            print("{} completed".format(c))
         pass
 
     def shutdown(self):
@@ -33,7 +38,9 @@ class database_op:
         ]
         for c in command_list:
             stdin, stdout, stderr = self.ssh_connection.exec_command(c)
-            print(stdout.readlines())
+            while stderr.readline():
+                continue
+            print("{} completed".format(c))
         self.ssh_connection.close()
         pass
 
