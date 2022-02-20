@@ -35,19 +35,22 @@ class client:
         self.database.connect_database()
 
     def operation(self, type, *args):
-        value = None
-        if len(args) > 1:
-            value = args[1]
-        self.logger.write_log(1, "invoke", type, value)
         try:
             if type == "write":
+                self.logger.write_history(1, "invoke", type, args[1])
                 self.database.write(*args)
-                self.logger.write_log(1, "ok", type, value)
+                self.logger.write_history(1, "ok", type, args[1])
             elif type == "read":
+                self.logger.write_history(1, "invoke", type, None)
                 read_val = self.database.read(*args)
-                self.logger.write_log(1, "ok", type, read_val)
+                self.logger.write_history(1, "ok", type, read_val)
             elif type == "cas":
-                self.database.cas(*args)
+                self.logger.write_history(1, "invoke", type, "[{} {}]".format(args[1], args[2]))
+                read_val = self.database.cas(*args)
+                if read_val:
+                    self.logger.write_history(1, "ok", type, "[{} {}]".format(args[1], args[2]))
+                else:
+                    self.logger.write_history(1, "fail", type, "[{} {}]".format(args[1], args[2]))
         except Exception:
             print(Exception.with_traceback())
-            self.logger.write_log(1, "fail", type, value)
+            self.logger.write_history(1, "fail", type, None)

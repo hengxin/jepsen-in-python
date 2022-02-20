@@ -4,7 +4,6 @@
 # @Email   : 2764065464@qq.com
 # @File    : database.py
 import etcd3
-from log import log_util
 
 
 class database_op:
@@ -57,4 +56,5 @@ class database_op:
 
     # compare and set
     def cas(self, key, value_old, value_new):
-        pass
+        result = self.database_connection.replace(key, value_old, value_new)
+        return result

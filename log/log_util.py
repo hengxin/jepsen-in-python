@@ -9,11 +9,13 @@ import logging
 class log:
     def __init__(self, option):
         self.option = option
+        self.history_file = "history.edn"
+        self.log_file = "log.log"
 
-    def write_log(self, process, type, function, value):
+    def write_history(self, process, type, function, value):
         if not value:
             value = "nil"
-        with open("history.edn", 'a') as f:
+        with open(self.history_file, 'a') as f:
             f.write('{')
             f.write(":process {}, :type :{}, :f :{}, :value {}".format(str(process), type, function, value))
             f.write("}\n")
