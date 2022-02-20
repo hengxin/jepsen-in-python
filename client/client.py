@@ -16,7 +16,6 @@ class client:
         self.logger = logger
         self.ssh_connection = paramiko.SSHClient()
         self.connect_ssh()
-        # todo 下面是将database中的对于数据库的操作函数持有化 暂时为占位
         self.database = database_op(self.ssh_connection, self.hostname, 2379, *args)
 
     def connect_ssh(self):
