@@ -4,7 +4,7 @@
 # @Email   : 2764065464@qq.com
 # @File    : database.py
 import etcd3
-import eventlet
+from log import log_util
 
 
 class database_op:
@@ -53,8 +53,7 @@ class database_op:
 
     def read(self, key):
         result = self.database_connection.get(key)
-        print(result)
-        pass
+        return int(result[0])
 
     # compare and set
     def cas(self, key, value_old, value_new):

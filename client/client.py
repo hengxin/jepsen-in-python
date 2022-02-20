@@ -6,17 +6,18 @@
 import paramiko
 from db.database import database_op
 
+
 class client:
-    def __init__(self, hostname, port, username, passwd, *args):
+    def __init__(self, hostname, port, username, passwd, logger, *args):
         self.hostname = hostname
         self.port = port
         self.username = username
         self.passwd = passwd
+        self.logger = logger
         self.ssh_connection = paramiko.SSHClient()
         self.connect_ssh()
         # todo 下面是将database中的对于数据库的操作函数持有化 暂时为占位
         self.database = database_op(self.ssh_connection, self.hostname, 2379, *args)
-
 
     def connect_ssh(self):
         self.ssh_connection.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -35,9 +36,19 @@ class client:
         self.database.connect_database()
 
     def operation(self, type, *args):
-        if type == "w":
-            self.database.write(*args)
-        elif type == "r":
-            self.database.read(*args)
-        elif type == "cas":
-            self.database.cas(*args)
+        value = None
+        if len(args) > 1:
+            value = args[1]
+        self.logger.write_log(1, "invoke", type, value)
+        try:
+            if type == "write":
+                self.database.write(*args)
+                self.logger.write_log(1, "ok", type, value)
+            elif type == "read":
+                read_val = self.database.read(*args)
+                self.logger.write_log(1, "ok", type, read_val)
+            elif type == "cas":
+                self.database.cas(*args)
+        except Exception:
+            print(Exception.with_traceback())
+            self.logger.write_log(1, "fail", type, value)

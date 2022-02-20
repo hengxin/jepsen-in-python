@@ -9,16 +9,13 @@ import logging
 class log:
     def __init__(self, option):
         self.option = option
-        self.file = self.new_history_file(option.type)
 
-    @staticmethod
-    def new_history_file(type):
-        if type == "history":
-            return "file_history"
-        elif type == "log":
-            return "file_log"
+    def write_log(self, process, type, function, value):
+        if not value:
+            value = "nil"
+        with open("history.edn", 'a') as f:
+            f.write('{')
+            f.write(":process {}, :type :{}, :f :{}, :value {}".format(str(process), type, function, value))
+            f.write("}\n")
+        f.close()
 
-    def write_log(self, message):
-        with open(self.file, 'w') as f:
-            logging.log(message)
-            f.write(message)
