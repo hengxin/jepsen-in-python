@@ -7,11 +7,11 @@ import etcd3
 
 
 class database_op:
-    def __init__(self, ssh_connection, hostname, port, *args):
+    def __init__(self, ssh_connection, hostname, port, config):
         self.ssh_connection = ssh_connection
         self.hostname = hostname
         self.port = port
-        self.initial_cluster = args[0]
+        self.initial_cluster = config["initial_cluster"]
         self.database_connection = None
 
     def setup(self):

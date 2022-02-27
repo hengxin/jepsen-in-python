@@ -8,7 +8,7 @@ from db.database import database_op
 
 
 class client:
-    def __init__(self, hostname, port, username, passwd, logger, *args):
+    def __init__(self, hostname, port, username, passwd, logger, database_config):
         self.hostname = hostname
         self.port = port
         self.username = username
@@ -16,7 +16,7 @@ class client:
         self.logger = logger
         self.ssh_connection = paramiko.SSHClient()
         self.connect_ssh()
-        self.database = database_op(self.ssh_connection, self.hostname, 2379, *args)
+        self.database = database_op(self.ssh_connection, self.hostname, 2379, database_config)
 
     def connect_ssh(self):
         self.ssh_connection.set_missing_host_key_policy(paramiko.AutoAddPolicy())
