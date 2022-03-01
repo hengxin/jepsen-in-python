@@ -12,7 +12,6 @@ class database_op:
         self.hostname = hostname
         self.port = port
         self.initial_cluster = config["initial_cluster"]
-        self.database_connection = None
 
     def setup(self):
         command_list = [
@@ -44,17 +43,5 @@ class database_op:
         pass
 
     def connect_database(self):
-        self.database_connection = etcd3.client(host=self.hostname, port=self.port)
+        return etcd3.client(host=self.hostname, port=self.port)
 
-    def write(self, key, value):
-        self.database_connection.put(key, value)
-        pass
-
-    def read(self, key):
-        result = self.database_connection.get(key)
-        return int(result[0])
-
-    # compare and set
-    def cas(self, key, value_old, value_new):
-        result = self.database_connection.replace(key, value_old, value_new)
-        return result
