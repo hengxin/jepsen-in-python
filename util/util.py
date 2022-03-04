@@ -1,10 +1,18 @@
 import time
 import logging
+import yaml
+import os
+
 
 logging.basicConfig(level=logging.DEBUG)
 
 # dynamic, float
 relative_time_origin = None
+
+def read_config(filename):
+    with open(filename, 'r', encoding='utf-8') as f:
+        result = yaml.load(f.read(), Loader=yaml.FullLoader)
+    return result
 
 
 def with_relative_time(func, *args, **kwargs):
