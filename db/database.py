@@ -7,12 +7,11 @@ import etcd3
 
 
 class database_op:
-    def __init__(self, ssh_connection, hostname, port, *args):
+    def __init__(self, ssh_connection, hostname, port, config):
         self.ssh_connection = ssh_connection
         self.hostname = hostname
         self.port = port
-        self.initial_cluster = args[0]
-        self.database_connection = None
+        self.initial_cluster = config["initial_cluster"]
 
     def setup(self):
         command_list = [
@@ -44,17 +43,5 @@ class database_op:
         pass
 
     def connect_database(self):
-        self.database_connection = etcd3.client(host=self.hostname, port=self.port)
+        return etcd3.client(host=self.hostname, port=self.port)
 
-    def write(self, key, value):
-        self.database_connection.put(key, value)
-        pass
-
-    def read(self, key):
-        result = self.database_connection.get(key)
-        return int(result[0])
-
-    # compare and set
-    def cas(self, key, value_old, value_new):
-        result = self.database_connection.replace(key, value_old, value_new)
-        return result

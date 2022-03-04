@@ -8,15 +8,17 @@ from db.database import database_op
 
 
 class client:
-    def __init__(self, hostname, port, username, passwd, logger, *args):
-        self.hostname = hostname
-        self.port = port
-        self.username = username
-        self.passwd = passwd
+    def __init__(self, node, logger, database_config, operation):
+        self.hostname = node["hostname"]
+        self.port = node["port"]
+        self.username = node["username"]
+        self.passwd = node["password"]
         self.logger = logger
+        self.operation = operation
         self.ssh_connection = paramiko.SSHClient()
         self.connect_ssh()
-        self.database = database_op(self.ssh_connection, self.hostname, 2379, *args)
+        self.database = database_op(self.ssh_connection, self.hostname, 2379, database_config)
+        self.database_connection = None
 
     def connect_ssh(self):
         self.ssh_connection.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -32,25 +34,11 @@ class client:
         self.database.shutdown()
 
     def connect_db(self):
-        self.database.connect_database()
+        self.database_connection = self.database.connect_database()
 
-    def operation(self, type, *args):
-        try:
-            if type == "write":
-                self.logger.write_history(1, "invoke", type, args[1])
-                self.database.write(*args)
-                self.logger.write_history(1, "ok", type, args[1])
-            elif type == "read":
-                self.logger.write_history(1, "invoke", type, None)
-                read_val = self.database.read(*args)
-                self.logger.write_history(1, "ok", type, read_val)
-            elif type == "cas":
-                self.logger.write_history(1, "invoke", type, "[{} {}]".format(args[1], args[2]))
-                read_val = self.database.cas(*args)
-                if read_val:
-                    self.logger.write_history(1, "ok", type, "[{} {}]".format(args[1], args[2]))
-                else:
-                    self.logger.write_history(1, "fail", type, "[{} {}]".format(args[1], args[2]))
-        except Exception:
-            print(Exception.with_traceback())
-            self.logger.write_history(1, "fail", type, None)
+    def operate(self, f):
+        history = f()
+        self.logger.write_history(1, history["type"], history["f"], history["value"])
+        history_b = self.operation(self.database_connection, history)
+        self.logger.write_history(1, history_b["type"], history_b["f"], history_b["value"])
+

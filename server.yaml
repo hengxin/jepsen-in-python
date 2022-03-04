@@ -1,0 +1,10 @@
+client1:
+  hostname: "119.3.69.98"
+  port: 22
+  username: "root"
+  password: ""
+client2:
+  hostname: "42.192.52.249"
+  port: 22
+  username: "root"
+  password: ""

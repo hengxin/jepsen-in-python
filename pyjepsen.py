@@ -3,40 +3,98 @@
 # @Author  : jiangnanweishao999
 # @Email   : 2764065464@qq.com
 # @File    : pyjepsen.py
+import random
+
+from util import util
 from client.client import client
 from log.log_util import log
 from threading import Thread
 import time
 import os
+import random
+
+
+def operation(database_connection, history):
+    function_name = history["f"]
+    try:
+        if function_name == "write":
+            database_connection.put("foo", history["value"])
+            return {
+                "type": "ok",
+                "f": "write",
+                "value": history["value"]
+            }
+        elif function_name == "read":
+            read_result = database_connection.get("foo")
+            return {
+                "type": "ok",
+                "f": "read",
+                "value": int(read_result[0])
+            }
+        elif function_name == "cas":
+            cas_result = database_connection.replace("foo", history["value"][0], history["value"][1])
+            return {
+                "type": "ok" if cas_result else "fail",
+                "f": "cas",
+                "value": history["value"]
+            }
+    except Exception:
+        print(Exception.with_traceback())
+        return {
+            "type": "fail",
+            "f": function_name,
+            "value": None
+        }
+    pass
+
+
+def write():
+    return {
+        "type": "invoke",
+        "f": "write",
+        "value": str(random.randint(1, 5))
+            }
+
+
+def read():
+    return {
+        "type": "invoke",
+        "f": "read",
+        "value": None
+    }
+
+
+    # compare and set
+def cas():
+    return {
+        "type": "invoke",
+        "f": "cas",
+        "value": [str(random.randint(1, 5)), str(random.randint(1, 5))]
+    }
+
 
 if __name__ == '__main__':
+    server_config = util.read_config("server.yaml")
+    database_config = util.read_config("database.yaml")
+    logger = log({})
     # 创建日志对象 用于写文件
     # 可传入日志的相关配置
-    logger = log({})
-    initial_cluster = "42.192.52.249=http://42.192.52.249:2380,119.3.69.98=http://119.3.69.98:2380"
-    client1 = client("42.192.52.249", 22, "root", "Asdf159753", logger, initial_cluster)
-    client2 = client("119.3.69.98", 22, "root", "T2419tzh", logger, initial_cluster)
-    t1 = Thread(target=client1.setup_db())
-    t2 = Thread(target=client2.setup_db())
-    t1.start()
-    t2.start()
+    client_list = []
+    for node in server_config:
+        new_client = client(server_config[node], logger, database_config, operation)
+        client_list.append(new_client)
+    for client in client_list:
+        t = Thread(target=client.setup_db())
+        t.start()
     time.sleep(10)
-    client1.connect_db()
-    client2.connect_db()
-    client1.operation("write", 'foo', '1')
-    client2.operation('read', 'foo')
-    client1.operation('cas', 'foo', '3', '1')
-    client1.operation('cas', 'foo', '1', '4')
-    client2.operation('read', 'foo')
-    client2.operation("write", 'foo', '2')
-    client1.operation('read', 'foo')
-    client2.operation('write', 'foo', '3')
-    client1.operation('read', 'foo')
-    client1.operation('write', 'foo', '1')
-    client2.operation("write", 'foo', '2')
-    client1.operation('read', 'foo')
-    client1.shutdown_db()
-    client2.shutdown_db()
+    for client in client_list:
+        client.connect_db()
+    # 把list交给generator去操作
+    method_list = [write, read, cas]
+    for i in range(100):
+        client_list[random.randint(0, len(client_list)-1)].operate(method_list[random.randint(0, len(method_list)-1)])
+    for client in client_list:
+        client.shutdown_db()
     # knossos打了个包 先这样用着
     result = os.popen("java -jar knossos-0.3.9-SNAPSHOT-standalone.jar --model cas-register history.edn")
     for i in result.readlines():
