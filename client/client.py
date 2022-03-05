@@ -17,7 +17,7 @@ class client:
         self.operation = operation
         self.ssh_connection = paramiko.SSHClient()
         self.connect_ssh()
-        self.database = database_op(self.ssh_connection, self.hostname, 2379, database_config)
+        self.database = database_op(self.ssh_connection, self.hostname, 2379, logger, database_config)
         self.database_connection = None
 
     def connect_ssh(self):

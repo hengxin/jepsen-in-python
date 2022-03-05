@@ -4,13 +4,31 @@
 # @Email   : 2764065464@qq.com
 # @File    : log_util.py
 import logging
+import time
+from logging.handlers import TimedRotatingFileHandler
+import coloredlogs
 
 
 class log:
     def __init__(self, option):
         self.option = option
-        self.history_file = "history.edn"
-        self.log_file = "log.log"
+        self.history_file = "history-{}.edn".format(time.time())
+        self.log_file = "log-{}.log".format(time.time())
+        logger = logging.getLogger()
+        fmt = "[%(asctime)s] [%(levelname)s] %(message)s"
+        formatter = logging.Formatter(fmt)
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.INFO)
+        ch.setFormatter(formatter)
+        logger.addHandler(ch)
+        fh = TimedRotatingFileHandler(self.log_file, encoding='utf-8')
+        fh.setLevel(logging.INFO)
+        fh.setFormatter(formatter)
+        logger.setLevel(logging.INFO)
+        logger.addHandler(fh)
+        coloredlogs.install(fmt=fmt,
+                            level=logging.INFO,
+                            logger=logger)
 
     def write_history(self, process, type, function, value):
         if not value:
@@ -22,4 +40,3 @@ class log:
             f.write(":process {}, :type :{}, :f :{}, :value {}".format(str(process), type, function, value))
             f.write("}\n")
         f.close()
-

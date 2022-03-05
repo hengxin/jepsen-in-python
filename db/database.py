@@ -3,14 +3,17 @@
 # @Author  : jiangnanweishao999
 # @Email   : 2764065464@qq.com
 # @File    : database.py
+import logging
+
 import etcd3
 
 
 class database_op:
-    def __init__(self, ssh_connection, hostname, port, config):
+    def __init__(self, ssh_connection, hostname, port, logger, config):
         self.ssh_connection = ssh_connection
         self.hostname = hostname
         self.port = port
+        self.logger = logger
         self.initial_cluster = config["initial_cluster"]
 
     def setup(self):
@@ -26,7 +29,7 @@ class database_op:
            # print('{} started'.format(c))
             while i != '':
                 i = stdout.readline()
-            print("{} completed".format(c))
+            logging.info("{} completed".format(c))
         pass
 
     def shutdown(self):
@@ -38,7 +41,7 @@ class database_op:
             stdin, stdout, stderr = self.ssh_connection.exec_command(c)
             while stderr.readline():
                 continue
-            print("{} completed".format(c))
+            logging.info("{} completed".format(c))
         self.ssh_connection.close()
         pass
 

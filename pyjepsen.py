@@ -3,6 +3,7 @@
 # @Author  : jiangnanweishao999
 # @Email   : 2764065464@qq.com
 # @File    : pyjepsen.py
+import logging
 import random
 
 from util import util
@@ -29,7 +30,7 @@ def operation(database_connection, history):
             return {
                 "type": "ok",
                 "f": "read",
-                "value": int(read_result[0])
+                "value": int(read_result[0]) if read_result[0] else None
             }
         elif function_name == "cas":
             cas_result = database_connection.replace("foo", history["value"][0], history["value"][1])
@@ -87,15 +88,19 @@ if __name__ == '__main__':
         t = Thread(target=client.setup_db())
         t.start()
     time.sleep(10)
-    for client in client_list:
-        client.connect_db()
-    # 把list交给generator去操作
-    method_list = [write, read, cas]
-    for i in range(100):
-        client_list[random.randint(0, len(client_list)-1)].operate(method_list[random.randint(0, len(method_list)-1)])
+    try:
+        for client in client_list:
+            client.connect_db()
+        # 把list交给generator去操作
+        method_list = [write, read, cas]
+        for i in range(100):
+            client_list[random.randint(0, len(client_list)-1)].operate(method_list[random.randint(0, len(method_list)-1)])
+    except Exception:
+        logging.error("somthing wrong")
+        logging.error(Exception.with_traceback())
     for client in client_list:
         client.shutdown_db()
     # knossos打了个包 先这样用着
-    result = os.popen("java -jar knossos-0.3.9-SNAPSHOT-standalone.jar --model cas-register history.edn")
+    result = os.popen("java -jar knossos-0.3.9-SNAPSHOT-standalone.jar --model cas-register {}".format(logger.history_file))
     for i in result.readlines():
         print(i)
