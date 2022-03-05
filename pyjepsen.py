@@ -8,7 +8,7 @@ import random
 
 from util import util
 from client.client import client
-from log.log_util import log
+from logger.log_util import log
 from threading import Thread
 import time
 import os

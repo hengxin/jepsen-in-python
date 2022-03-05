@@ -4,10 +4,10 @@ import yaml
 import os
 
 
-logging.basicConfig(level=logging.DEBUG)
 
 # dynamic, float
 relative_time_origin = None
+
 
 def read_config(filename):
     with open(filename, 'r', encoding='utf-8') as f:

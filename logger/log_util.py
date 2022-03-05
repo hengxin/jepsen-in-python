@@ -12,8 +12,8 @@ import coloredlogs
 class log:
     def __init__(self, option):
         self.option = option
-        self.history_file = "history-{}.edn".format(time.time())
-        self.log_file = "log-{}.log".format(time.time())
+        self.history_file = "histories/history-{}.edn".format(time.time())
+        self.log_file = "logs/logger-{}.logger".format(time.time())
         logger = logging.getLogger()
         fmt = "[%(asctime)s] [%(levelname)s] %(message)s"
         formatter = logging.Formatter(fmt)
