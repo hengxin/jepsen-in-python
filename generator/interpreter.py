@@ -7,6 +7,7 @@
 """
 负责翻译generator的操作，处理worker线程，生成与clients和nemeses交互的线程，并记录历史。
 """
+from functools import partial
 import time
 import threading
 import logging
@@ -15,10 +16,17 @@ import concurrent.futures
 import queue
 import generator.generator as gen
 import client.client as cli
+import util.util as util
 import nemesis.nemesis as nemesis
 
 logging.basicConfig(level=logging.DEBUG)
 
+"""
+When the generator is :pending, this controls the maximum interval before
+we'll update the context and check the generator for an operation again.
+Measured in microseconds.
+"""
+MAX_PENDING_INTERVAL = 1000
 
 # Interface
 class Worker:
@@ -28,7 +36,7 @@ class Worker:
         :param id:
         :return:
         """
-        raise Exception('子类必须实现该方法')
+        raise Exception('subclass must implement this method')
 
     def invoke(self, test: dict, op: dict):
         """
@@ -36,14 +44,14 @@ class Worker:
         :param op:
         :return:
         """
-        raise Exception('子类必须实现该方法')
+        raise Exception('subclass must implement this method')
 
     def close(self, test: dict):
         """
         :param test:
         :return:
         """
-        raise Exception('子类必须实现该方法')
+        raise Exception('subclass must implement this method')
 
 
 class ClientWorker(Worker):
@@ -116,7 +124,7 @@ class ClientNemesisWorker(Worker):
         return
 
 
-def spawn_worker(test, out: queue, worker, id):
+def spawn_worker(test, out: queue, worker, id) -> dict:
     """
     :param test:
     :param out: 接收已完成操作的队列
@@ -178,3 +186,72 @@ def spawn_worker(test, out: queue, worker, id):
         "in": _in,
         "future": future
     }
+
+
+def goes_in_history(op) -> bool:
+    """
+    Should this operation be journaled to the history? We exclude :log and
+    :sleep ops right now.
+    :param op:
+    :return: True or False
+    """
+    if op['type'] == 'sleep' or op['type'] == 'log':
+        return False
+    else:
+        return True
+
+
+def run(test):
+    """
+    :param test:
+    :return:
+    """
+    gen.init()
+    ctx = gen.context(test)
+    worker_ids = gen.all_threads(ctx)
+    completions = queue.Queue(maxsize=len(worker_ids))
+    workers = list(map(
+        partial(spawn_worker, test, completions),
+        worker_ids))
+    invocations = {}
+    for worker in workers:
+        invocations[worker['id']] = worker['in']
+    gene = gen.validate(gen.friendly_exceptions(test['generator']))
+
+    try:
+        outstanding_0 = 0  # 未完成的操作数
+        poll_timeout_0 = 0 # 单位：秒
+        history_0 = []     #
+        def _run_recursive(ctx, gene, outstanding, poll_timeout, history):
+            cur_op = None if completions.empty() else completions.get(timeout=poll_timeout)
+            if cur_op:
+                print(cur_op['completed'])
+                cur_thread = gen.process2thread(ctx, cur_op['process'])
+                time_taken = util.compute_relative_time()
+                cur_op.update({"time": time_taken})  # 更新时间戳
+                ctx.update({  # 更新时间戳及线程释放信息
+                    "time": time_taken,
+                    # ctx['free-threads']类型为set
+                    "free-threads": ctx['free-threads'].add(cur_thread)
+                })
+
+
+                gene = gen.update(gene, test, ctx, cur_op)
+
+                if cur_thread == 'nemesis' or cur_op['type'] != 'info':
+                    pass
+                else: # 崩溃的线程（不包括nemesis线程）应该分配新的标识符
+                    ctx['workers'][cur_thread] = gen.next_process(ctx, cur_thread)
+
+                if goes_in_history(cur_op):
+                    history.append(cur_op)
+
+                _run_recursive(ctx, gene, outstanding-1 ,0, history)
+
+            else:
+
+
+        _run_recursive(ctx, gene, outstanding_0, poll_timeout_0, history_0)
+
+    except Exception as e:
+
