@@ -15,7 +15,7 @@ class log:
         self.history_file = "histories/history-{}.edn".format(time.time())
         self.log_file = "logs/logger-{}.logger".format(time.time())
         logger = logging.getLogger()
-        fmt = "[%(asctime)s] [%(levelname)s] %(message)s"
+        fmt = "[%(asctime)s] [%(levelname)s] [%(filename)s:%(funcName)s:%(lineno)s] %(message)s"
         formatter = logging.Formatter(fmt)
         ch = logging.StreamHandler()
         ch.setLevel(logging.INFO)
@@ -26,6 +26,7 @@ class log:
         fh.setFormatter(formatter)
         logger.setLevel(logging.INFO)
         logger.addHandler(fh)
+        coloredlogs.DEFAULT_LOG_FORMAT
         coloredlogs.install(fmt=fmt,
                             level=logging.INFO,
                             logger=logger)
