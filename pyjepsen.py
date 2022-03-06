@@ -4,8 +4,6 @@
 # @Email   : 2764065464@qq.com
 # @File    : pyjepsen.py
 import logging
-import random
-
 from util import util
 from client.client import client
 from logger.log_util import log

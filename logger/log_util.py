@@ -26,7 +26,6 @@ class log:
         fh.setFormatter(formatter)
         logger.setLevel(logging.INFO)
         logger.addHandler(fh)
-        coloredlogs.DEFAULT_LOG_FORMAT
         coloredlogs.install(fmt=fmt,
                             level=logging.INFO,
                             logger=logger)

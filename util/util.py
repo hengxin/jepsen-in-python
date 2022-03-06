@@ -1,9 +1,6 @@
 import time
 import logging
 import yaml
-import os
-
-
 
 # dynamic, float
 relative_time_origin = None
