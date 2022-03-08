@@ -21,7 +21,7 @@ def with_relative_time(func, *args, **kwargs):
 
 def compute_relative_time() -> float:
     """
-    计算从relative_time_origin的相对时间，单位：秒
+    计算从relative_time_origin的相对时间，单位：浮点秒
     """
     global relative_time_origin
     return time.time() - relative_time_origin
