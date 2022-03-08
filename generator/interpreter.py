@@ -28,6 +28,7 @@ Measured in microseconds.
 """
 MAX_PENDING_INTERVAL = 1
 
+
 # Interface
 class Worker:
     def open(self, test: dict, id):
@@ -220,8 +221,9 @@ def run(test):
 
     try:
         outstanding_0 = 0  # 未完成的操作数
-        poll_timeout_0 = 0 # 单位：秒
-        history_0 = []     #
+        poll_timeout_0 = 0  # 单位：秒
+        history_0 = []  #
+
         def _run_recursive(ctx, gene, outstanding, poll_timeout, history):
             try:
                 cur_op = None if completions.empty() else completions.get(timeout=poll_timeout)
@@ -238,18 +240,17 @@ def run(test):
                 ctx.update({"time": time_taken})
                 ctx['free-threads'].add(cur_thread)
 
-
                 gene = gen.update(gene, test, ctx, cur_op)
 
                 if cur_thread == 'nemesis' or cur_op['type'] != 'info':
                     pass
-                else: # 崩溃的线程（不包括nemesis线程）应该分配新的标识符
+                else:  # 崩溃的线程（不包括nemesis线程）应该分配新的标识符
                     ctx['workers'][cur_thread] = gen.next_process(ctx, cur_thread)
 
                 if goes_in_history(cur_op):
                     history.append(cur_op)
                 # 记录历史并继续
-                _run_recursive(ctx, gene, outstanding-1 ,0, history)
+                _run_recursive(ctx, gene, outstanding - 1, 0, history)
 
             else:
                 time_taken = util.compute_relative_time()
@@ -297,8 +298,6 @@ def run(test):
 
                         _run_recursive(ctx, gene2, outstanding + 1, 0, history)
 
-
-
         _run_recursive(ctx, gene, outstanding_0, poll_timeout_0, history_0)
 
     except Exception as e:
@@ -328,9 +327,3 @@ def run(test):
             except StopIteration:
                 break
         raise e
-
-
-
-
-
-

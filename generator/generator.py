@@ -3,7 +3,9 @@
 # @Author  : kylezhtao
 # @Email   : kylezhtao@outlook.com
 # @File    : generator.py
+import logging
 import random
+from inspect import isfunction
 
 
 class Generator:
@@ -15,16 +17,32 @@ class Generator:
         :param event:
         :return:
         """
-        raise Exception('subclass must implement this method')
+        if gen is None:
+            return None
+        elif isfunction(gen):
+            return gen
+        elif isinstance(gen, dict):
+            return gen
 
-    def op(self, gen, text, context):
+    def op(self, gen, test, context):
         """
         :param gen:
-        :param text:
+        :param test:
         :param context:
         :return:
         """
-        raise Exception('subclass must implement this method')
+        if gen is None:
+            return None
+        elif isfunction(gen):
+            res = gen(test, context) \
+                if gen.__code__.co_argcount == 2 else gen()
+            if res:
+                return self.op([res, gen], test, context)
+            else:
+                return None
+        elif isinstance(gen, dict):  # 本身已经是一个op
+            op = fill_in_op(gen, context)
+            return [op, gen if op == 'pending' else None]
 
 
 '''
@@ -101,5 +119,3 @@ def fill_in_op(op, context):
         return op
     else:
         return "pending"
-
-
