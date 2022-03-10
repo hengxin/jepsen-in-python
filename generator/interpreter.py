@@ -26,7 +26,8 @@ When the generator is :pending, this controls the maximum interval before
 we'll update the context and check the generator for an operation again.
 Measured in microseconds.
 """
-MAX_PENDING_INTERVAL = 1000
+MAX_PENDING_INTERVAL = 1
+
 
 # Interface
 class Worker:
@@ -220,38 +221,109 @@ def run(test):
 
     try:
         outstanding_0 = 0  # 未完成的操作数
-        poll_timeout_0 = 0 # 单位：秒
-        history_0 = []     #
+        poll_timeout_0 = 0  # 单位：秒
+        history_0 = []  #
+
         def _run_recursive(ctx, gene, outstanding, poll_timeout, history):
-            cur_op = None if completions.empty() else completions.get(timeout=poll_timeout)
+            try:
+                cur_op = None if completions.empty() else completions.get(timeout=poll_timeout)
+            except queue.Empty:
+                cur_op = None
+                pass  # 忽略queue内置的超时抛的Empty异常
+
             if cur_op:
                 print(cur_op['completed'])
                 cur_thread = gen.process2thread(ctx, cur_op['process'])
                 time_taken = util.compute_relative_time()
                 cur_op.update({"time": time_taken})  # 更新时间戳
-                ctx.update({  # 更新时间戳及线程释放信息
-                    "time": time_taken,
-                    # ctx['free-threads']类型为set
-                    "free-threads": ctx['free-threads'].add(cur_thread)
-                })
-
+                # 更新时间戳及线程释放信息
+                ctx.update({"time": time_taken})
+                ctx['free-threads'].add(cur_thread)
 
                 gene = gen.update(gene, test, ctx, cur_op)
 
                 if cur_thread == 'nemesis' or cur_op['type'] != 'info':
                     pass
-                else: # 崩溃的线程（不包括nemesis线程）应该分配新的标识符
+                else:  # 崩溃的线程（不包括nemesis线程）应该分配新的标识符
                     ctx['workers'][cur_thread] = gen.next_process(ctx, cur_thread)
 
                 if goes_in_history(cur_op):
                     history.append(cur_op)
-
-                _run_recursive(ctx, gene, outstanding-1 ,0, history)
+                # 记录历史并继续
+                _run_recursive(ctx, gene, outstanding - 1, 0, history)
 
             else:
+                time_taken = util.compute_relative_time()
+                ctx.update({"time": time_taken})
+                op, gene2 = gen.op(gene, test, ctx)
 
+                if op is None:
+                    if outstanding > 0:
+                        # 没有下一个操作，但仍有未完成的操作
+                        # 等待worker
+                        _run_recursive(ctx, gene, outstanding,
+                                       MAX_PENDING_INTERVAL, history)
+                    else:
+                        # 完成，告知worker退出
+                        for thread, in_queue in invocations.items():
+                            in_queue.put({"type": "exit"})
+
+                        # 阻塞获取future结果
+                        for worker in workers:
+                            fut = worker['future']
+                            res = fut.result()
+                            msg = "{}result:{!r}"
+                            logging.debug(msg.format(fut, res))
+                        return history
+
+                elif op == 'pending':
+                    _run_recursive(ctx, gene, outstanding,
+                                   MAX_PENDING_INTERVAL, history)
+
+                else:  # 得到一个操作调用
+                    # 时间未到，还不能求值
+                    if time_taken < op['time']:
+                        _run_recursive(ctx, gene, outstanding,
+                                       op['time'] - time_taken, history)
+                    else:
+                        cur_thread = gen.process2thread(ctx, op['process'])
+                        _ = invocations[cur_thread].put(op)
+                        # 更新时间戳及线程占用信息
+                        ctx.update({"time": op['time']})
+                        ctx['free-threads'].remove(cur_thread)
+                        gene2 = gen.update(gene2, test, ctx, op)
+
+                        if goes_in_history(cur_op):
+                            history.append(cur_op)
+
+                        _run_recursive(ctx, gene2, outstanding + 1, 0, history)
 
         _run_recursive(ctx, gene, outstanding_0, poll_timeout_0, history_0)
 
     except Exception as e:
+        logging.info("Shutting down workers after abnormal exit")
 
+        # 确保worker退出
+        # 1. 尝试取消每个worker，仅*一次*
+        for worker in workers:
+            fut = worker['future']
+            res = fut.cancel()
+            msg = "{} is cancelled?:{!r}"
+            logging.debug(msg.format(fut, res))
+
+        # 2. 若1无效，等所有worker完成后退出，并更新队列状态
+        it = iter(workers)
+        cursor = next(it)
+        while True:
+            try:
+                in_queue, fut = cursor['in'], cursor['future']
+                if fut.done():
+                    cursor = next(it)
+                else:
+                    try:
+                        in_queue.put_nowait({"type": "exit"})
+                    except queue.Full:
+                        pass  # 忽略满异常
+            except StopIteration:
+                break
+        raise e
