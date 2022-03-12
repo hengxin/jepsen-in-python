@@ -86,6 +86,27 @@ def majority(clients: list):
 #                      5:{3,2},
 #                      4:{1,2},
 #                      3:{1,5}}
+
+def majorities_ring_perfect(clients):
+    length = len(clients)
+    step = math.floor(length/2)
+    shuffled_clients = shuffle(clients)
+    result = {}
+    for i in range(0, length):
+        result[shuffled_clients[i]] = [shuffled_clients[(i+step-length if (i+step >= length) else i+step)]]
+    for i in result.keys():
+        result[result[i][0]].append(i)
+    return result
+
+
+# 以[1 2 3 4 5 6]为例
+# 将每个节点分为一个组
+# {1},{2},{3},{4},{5},{6}
+# 将每个组的（度，首领）对进行随机排序
+# [1,6] [1,2] [1,3] [1,4] [1,5], [1 1]
+# 挑选第一个组作为a 再在之后中挑选顺序最靠前的可以连接的组b进行连接
+# 可以连接的组b指b的组中不包含a
+# 知道a的度>=n/2+1 此例中为4
 # 以[1 2 3 4 5 6 7]为例子则可能有结果:
 #                      {1:{6,3,2}, 1{2,7}
 #                       2:{7,5,1}, 2{1,3}
@@ -103,18 +124,6 @@ def majority(clients: list):
 #                       6:{4,3,8}, 6{5, 7, 8}
 #                       7:{3,2,5}, 7{6, 8, 5}
 #                       8:{4,1,6}} 8{7, 1, 6}
-def majorities_ring_perfect(clients):
-    pass
-
-
-# 以[1 2 3 4 5 6]为例
-# 将每个节点分为一个组
-# {1},{2},{3},{4},{5},{6}
-# 将每个组的（度，首领）对进行随机排序
-# [1,6] [1,2] [1,3] [1,4] [1,5], [1 1]
-# 挑选第一个组作为a 再在之后中挑选顺序最靠前的可以连接的组b进行连接
-# 可以连接的组b指b的组中不包含a
-# 知道a的度>=n/2+1 此例中为4
 def majorities_ring_stochastic(clients):
     result = {}
     for i in range(1, len(clients)+1):
@@ -141,6 +150,7 @@ def majorities_ring_stochastic(clients):
         degree[b[0]].remove(b[1])
         degree[b[0]+1].append(b[1])
     return invert_grudge(clients, result)
+
 
 def majorities_ring(clients):
     if len(clients) <= 5:
@@ -175,4 +185,4 @@ if __name__ == "__main__":
     #print(one([1, 2, 3, 4, 5]))
     #print(minority_third([1, 2, 3, 4, 5]))
     #print(primaries([1, 2, 3, 4, 5]))
-    print(majorities_ring([1,2,3,4,5,6,7,8]))
+    print(majorities_ring([1,2,3,4,5]))
