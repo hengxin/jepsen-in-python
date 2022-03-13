@@ -22,7 +22,8 @@ class ssh_client:
                                     port=port,
                                     username=username,
                                     password=password)
-
+        self.root_path = self.pwd()
+        self.mkdir()
 
 
     def shutdown(self):
@@ -41,6 +42,20 @@ class ssh_client:
         logging.info("{} completed!".format(full_command))
         return
 
+    def pwd(self):
+        stdin, stdout, stderr = self.ssh_connection.exec_command("pwd")
+        return stdout.readline().rstrip("\n")
+
+    def mkdir(self, root="", filename="tmp"):
+        if not root:
+            root = self.root_path
+        self.exec_command("mkdir {}/{}".format(root,filename))
+
+    def touch(self, root="", filename="tmp"):
+        if not root:
+            root = self.root_path
+        self.exec_command("touch {}/{}".format(root,filename))
+
     def wget(self, url, save_path="", file_name="", opts=None):
         if opts is None:
             opts = {}
@@ -48,8 +63,10 @@ class ssh_client:
             opts["-O"] = file_name
         if save_path:
             opts["-P"] = save_path
+        else:
+            opts["-P"] = self.root_path+"/tmp"
         command = "wget {}".format(url)
-        self.exec_command(command, opts)
+        self.exec_command(command, opts=opts)
 
     def tar(self, file_name, file_path="", mode="", opts=None):
         if opts is None:
@@ -81,3 +98,42 @@ class ssh_client:
     def kill(self, pid):
         command = "kill -9 {}".format(pid)
         self.exec_command(command)
+
+    def drop_net(self, ip_address):
+        opts = {
+            "-A": "INPUT",
+            "-s": ip_address,
+            "-j": "DROP",
+            "-w": ""
+        }
+        self.iptables(opts)
+
+    def drop_all_net(self, ip_address_list):
+        opts = {
+            "-A": "INPUT",
+            "-s": ",".join(ip_address_list),
+            "-j": "DROP",
+            "-w": ""
+        }
+        self.iptables(opts)
+
+    def heal_net(self):
+        opts = {
+            "-F": "",
+            "-w": ""
+        }
+        self.iptables(opts)
+        opts = {
+            "-X": "",
+            "-w": ""
+        }
+        self.iptables(opts)
+
+    def iptables(self, opts):
+        command = "iptables"
+        self.exec_command(command, opts=opts)
+
+
+if __name__ == "__main__":
+    s = ssh_client(hostname="public-cd-a5.disalg.cn", port=22, username="leoyhwei", password="Asdf159753")
+    print(s.pwd())

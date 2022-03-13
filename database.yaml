@@ -1,3 +1,3 @@
-initial_cluster: "42.192.52.249=http://42.192.52.249:2380,119.3.69.98=http://119.3.69.98:2380"
-
+initial_cluster: "42.192.52.249=http://42.192.52.249:2380,119.3.69.98=http://119.3.69.98:2380,public-cd-a3.disalg.cn=http://public-cd-a3.disalg.cn:2380,public-cd-a4.disalg.cn=http://public-cd-a4.disalg.cn:2380,public-cd-a5.disalg.cn=http://public-cd-a5.disalg.cn:2380"
+#initial_cluster: "42.192.52.249=http://42.192.52.249:2380,119.3.69.98=http://119.3.69.98:2380"
 port: 2379

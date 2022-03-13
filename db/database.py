@@ -15,11 +15,16 @@ class database_op:
         self.initial_cluster = config["initial_cluster"]
 
     def setup(self):
-        self.ssh_client.wget(url="https://storage.googleapis.com/etcd/v3.1.5/etcd-v3.1.5-linux-amd64.tar.gz",
-                             save_path="/root")
-        self.ssh_client.unzip(file_name="/root/etcd-v3.1.5-linux-amd64.tar.gz")
-        self.ssh_client.mv("/root/etcd-v3.1.5-linux-amd64", "/root/etcd")
-        self.ssh_client.exec_command(command="/root/etcd/etcd",
+        root_path = self.ssh_client.pwd()+"/tmp/"
+        self.ssh_client.wget(url="https://storage.googleapis.com/etcd/v3.1.5/etcd-v3.1.5-linux-amd64.tar.gz")
+        self.ssh_client.mkdir(root=root_path, filename="etcd")
+        self.ssh_client.unzip(file_name="{}etcd-v3.1.5-linux-amd64.tar.gz".format(root_path),
+                              opts={
+                                  "-C": root_path+"/etcd",
+                                  "--strip-components": 1
+                              })
+        self.ssh_client.touch(root=root_path, filename="etcd.log")
+        self.ssh_client.exec_command(command="{}etcd/etcd".format(root_path),
                                      opts={
                                          "--log-output": "stdout",
                                          "--name": self.hostname,
@@ -28,12 +33,14 @@ class database_op:
                                          "--advertise-client-urls": "http://{0}:2379".format(self.hostname),
                                          "--initial-cluster-state": "new",
                                          "--initial-advertise-peer-urls": "http://{0}:2380".format(self.hostname),
-                                         "--initial-cluster": self.initial_cluster
+                                         "--initial-cluster": self.initial_cluster,
+                                         "1>{}etcd.log".format(root_path): ""
                                      })
 
     def shutdown(self):
-        self.ssh_client.kill_by_process("etcd")
-        self.ssh_client.exec_command("rm -rf /root/*")
+        root_path = self.ssh_client.pwd() + "/tmp"
+        self.ssh_client.kill_by_process("tmp/etcd/etcd")
+        self.ssh_client.exec_command("rm -rf {}".format(root_path))
 
     def connect_database(self):
         return etcd3.client(host=self.hostname, port=self.port)

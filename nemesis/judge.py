@@ -26,6 +26,7 @@ def complete_grudge(lists: list):
             result[j] = other_nodes(lists, i)
     return result
 
+
 def invert_grudge(client: list, result: dict):
     invert_result = {}
     for key in result.keys():
@@ -89,11 +90,11 @@ def majority(clients: list):
 
 def majorities_ring_perfect(clients):
     length = len(clients)
-    step = math.floor(length/2)
+    step = math.floor(length / 2)
     shuffled_clients = shuffle(clients)
     result = {}
     for i in range(0, length):
-        result[shuffled_clients[i]] = [shuffled_clients[(i+step-length if (i+step >= length) else i+step)]]
+        result[shuffled_clients[i]] = [shuffled_clients[(i + step - length if (i + step >= length) else i + step)]]
     for i in result.keys():
         result[result[i][0]].append(i)
     return result
@@ -126,15 +127,15 @@ def majorities_ring_perfect(clients):
 #                       8:{4,1,6}} 8{7, 1, 6}
 def majorities_ring_stochastic(clients):
     result = {}
-    for i in range(1, len(clients)+1):
-        result[i] = [clients[i-1]]
+    for i in range(1, len(clients) + 1):
+        result[i] = [clients[i - 1]]
     degree = {1: clients.copy()}
     for i in range(2, len(clients)):
         degree[i] = []
     while True:
         dns = get_dns(degree)
         a = dns[0]
-        if a[0] >= math.floor(len(clients)/2)+1:
+        if a[0] >= math.floor(len(clients) / 2) + 1:
             break
         b = None
         for i in range(1, len(dns)):
@@ -146,9 +147,9 @@ def majorities_ring_stochastic(clients):
         result[a[1]].append(b[1])
         result[b[1]].append(a[1])
         degree[a[0]].remove(a[1])
-        degree[a[0]+1].append(a[1])
+        degree[a[0] + 1].append(a[1])
         degree[b[0]].remove(b[1])
-        degree[b[0]+1].append(b[1])
+        degree[b[0] + 1].append(b[1])
     return invert_grudge(clients, result)
 
 
@@ -181,8 +182,8 @@ def primaries(clients):
 
 
 if __name__ == "__main__":
-    #print(majority([1, 2, 3, 4, 5]))
-    #print(one([1, 2, 3, 4, 5]))
-    #print(minority_third([1, 2, 3, 4, 5]))
-    #print(primaries([1, 2, 3, 4, 5]))
-    print(majorities_ring([1,2,3,4,5]))
+    # print(majority([1, 2, 3, 4, 5]))
+    # print(one([1, 2, 3, 4, 5]))
+    # print(minority_third([1, 2, 3, 4, 5]))
+    # print(primaries([1, 2, 3, 4, 5]))
+    print(majorities_ring([1, 2, 3, 4, 5]))
