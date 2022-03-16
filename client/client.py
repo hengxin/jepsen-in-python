@@ -17,7 +17,6 @@ class client:
         self.username = node["username"]
         self.passwd = node["password"]
         self.logger = logger
-
         self.operation = operation
         self.ssh_client = ssh_client(self.hostname, self.port, self.username, self.passwd)
         self.database = database_op(self.ssh_client, self.hostname, logger, database_config)

@@ -25,7 +25,6 @@ class ssh_client:
         self.root_path = self.pwd()
         self.mkdir()
 
-
     def shutdown(self):
         self.ssh_connection.close()
 
@@ -42,6 +41,20 @@ class ssh_client:
         logging.info("{} completed!".format(full_command))
         return
 
+    def exec_sudo_command(self, command, print=False, opts=None):
+        if opts is None:
+            opts = {}
+        full_command = "{} {}".format(command, join_parameter(opts))
+        sudo_command = 'sudo sh -c "{}"'.format(full_command)
+        stdin, stdout, stderr = self.ssh_connection.exec_command(sudo_command)
+        i = stdout.readline()
+        while i != '':
+            i = stdout.readline()
+            if print:
+                logging.warning(i)
+        logging.info("{} completed!".format(full_command))
+        return
+
     def pwd(self):
         stdin, stdout, stderr = self.ssh_connection.exec_command("pwd")
         return stdout.readline().rstrip("\n")
@@ -49,12 +62,12 @@ class ssh_client:
     def mkdir(self, root="", filename="tmp"):
         if not root:
             root = self.root_path
-        self.exec_command("mkdir {}/{}".format(root,filename))
+        self.exec_sudo_command("mkdir {}/{}".format(root,filename))
 
     def touch(self, root="", filename="tmp"):
         if not root:
             root = self.root_path
-        self.exec_command("touch {}/{}".format(root,filename))
+        self.exec_sudo_command("touch {}/{}".format(root,filename))
 
     def wget(self, url, save_path="", file_name="", opts=None):
         if opts is None:
@@ -66,20 +79,20 @@ class ssh_client:
         else:
             opts["-P"] = self.root_path+"/tmp"
         command = "wget {}".format(url)
-        self.exec_command(command, opts=opts)
+        self.exec_sudo_command(command, opts=opts)
 
     def tar(self, file_name, file_path="", mode="", opts=None):
         if opts is None:
             opts = {}
         if mode == "unzip":
             command = "tar -zxvf {}".format(file_name)
-            self.exec_command(command, False, opts)
+            self.exec_sudo_command(command, False, opts)
         elif mode == "zip":
             command = "tar -czvf {} {}".format(file_name, file_path)
-            self.exec_command(command, False, opts)
+            self.exec_sudo_command(command, False, opts)
         else:
             command = "tar --help"
-            self.exec_command(command, True, opts)
+            self.exec_sudo_command(command, True, opts)
 
     def unzip(self, file_name, opts=None):
         self.tar(file_name=file_name, mode="unzip", opts=opts)
@@ -89,10 +102,10 @@ class ssh_client:
 
     def mv(self, origin_file, new_file):
         command = "mv {} {}".format(origin_file, new_file)
-        self.exec_command(command)
+        self.exec_sudo_command(command)
 
     def kill_by_process(self, process_name):
-        command = "ps -ef|grep "+process_name+"|grep -v grep|awk '{print $2}'|xargs kill -9"
+        command = "ps -ef|grep "+process_name+"|grep -v grep|awk '{print $2}'|xargs sudo kill -9"
         self.exec_command(command)
 
     def kill(self, pid):
@@ -131,9 +144,9 @@ class ssh_client:
 
     def iptables(self, opts):
         command = "iptables"
-        self.exec_command(command, opts=opts)
+        self.exec_sudo_command(command, opts=opts, print=False)
 
 
 if __name__ == "__main__":
     s = ssh_client(hostname="public-cd-a5.disalg.cn", port=22, username="leoyhwei", password="Asdf159753")
-    print(s.pwd())
+    s.heal_net()

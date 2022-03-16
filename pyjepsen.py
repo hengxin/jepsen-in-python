@@ -8,6 +8,8 @@ from util import util
 from client.client import client
 from logger.log_util import log
 from threading import Thread
+from nemesis import nemesis
+from nemesis.judge import *
 import time
 import os
 import random
@@ -101,17 +103,16 @@ if __name__ == '__main__':
             client.connect_db()
         # 把list交给generator去操作
         method_list = [write, read, cas]
-        print(client_list[0].hostname)
         client_list[0].operate(method_list[0])
+        partition_nemesis = nemesis.partition_nemesis(client_list, majorities_ring_stochastic)
         for i in range(30):
             client_list[random.randint(0, len(client_list) - 1)].operate(
                 method_list[random.randint(0, len(method_list) - 1)])
-        client_list[0].ssh_client.drop_all_net(
-            ["42.192.52.249", "public-cd-a3.disalg.cn", "public-cd-a4.disalg.cn", "public-cd-a5.disalg.cn"])
+        partition_nemesis.start()
         for i in range(30):
             client_list[random.randint(0, len(client_list) - 1)].operate(
                 method_list[random.randint(0, len(method_list) - 1)])
-        client_list[0].ssh_client.heal_net()
+        partition_nemesis.stop()
         for i in range(30):
             client_list[random.randint(0, len(client_list) - 1)].operate(
                 method_list[random.randint(0, len(method_list) - 1)])
