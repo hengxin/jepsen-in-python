@@ -74,6 +74,10 @@ class Generator:
         :return:
         """
 
+    def __str__(self):
+        f = dict((k, v) for k, v in vars(self).items() if not k.startswith("__"))
+        return repr(self) + "\nAttrs: " + pprint.pformat(f, indent=2)
+
 
 '''
 一些helper函数
@@ -186,10 +190,8 @@ class Validate(Generator):
                     .format(res)
                 for problem in problems:
                     errmsg += "  -{}".format(problem)
-                errmsg += "Generator:\n" \
-                          "{:>10d}\n" \
-                          "Context:\n" \
-                          "{}" \
+                errmsg += "Generator:{:>10d}\n" \
+                          "Context:{}\n" \
                     .format(gen, pprint.pformat(context, indent=2))
 
                 raise Exception(errmsg)
@@ -220,7 +222,7 @@ class FriendlyExceptions(Generator):
             errmsg = "Generator threw {} when asked for an operation\n" \
                      "Generator:{:>10d}\n" \
                      "Context:{}\n" \
-                .format(repr(e), self.gen, context)
+                .format(repr(e), self.gen, pprint.pformat(context, indent=2))
             raise Exception(errmsg)
 
     def update(self, _, test, context, event):
@@ -231,8 +233,8 @@ class FriendlyExceptions(Generator):
             errmsg = "Generator threw {} when updated with an event.\n" \
                      "Generator:{:>10d}\n" \
                      "Context:{}\n" \
-                     "Event:{}"\
-                .format(repr(e), self.gen, context, event)
+                     "Event:{}\n" \
+                .format(repr(e), self.gen, pprint.pformat(context, indent=2), pprint.pformat(event, indent=2))
             raise Exception(errmsg)
 
 
