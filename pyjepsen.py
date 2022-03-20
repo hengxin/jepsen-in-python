@@ -104,7 +104,7 @@ if __name__ == '__main__':
         # 把list交给generator去操作
         method_list = [write, read, cas]
         client_list[0].operate(method_list[0])
-        partition_nemesis = nemesis.partition_nemesis(client_list, majorities_ring_stochastic)
+        partition_nemesis = nemesis.nemesis_partition(client_list, majorities_ring_stochastic)
         for i in range(30):
             client_list[random.randint(0, len(client_list) - 1)].operate(
                 method_list[random.randint(0, len(method_list) - 1)])

@@ -28,32 +28,38 @@ class ssh_client:
     def shutdown(self):
         self.ssh_connection.close()
 
-    def exec_command(self, command, print=False, opts=None):
+    def exec_command(self, command, print=False, opts=None, return_result=False):
         if opts is None:
             opts = {}
         full_command = "{} {}".format(command, join_parameter(opts))
         stdin, stdout, stderr = self.ssh_connection.exec_command(full_command)
+        results = []
         i = stdout.readline()
         while i != '':
+            results.append(i)
             i = stdout.readline()
             if print:
                 logging.warning(i)
         logging.info("{} completed!".format(full_command))
-        return
+        if return_result:
+            return results
 
-    def exec_sudo_command(self, command, print=False, opts=None):
+    def exec_sudo_command(self, command, print=False, opts=None, return_result=False):
         if opts is None:
             opts = {}
         full_command = "{} {}".format(command, join_parameter(opts))
         sudo_command = 'sudo sh -c "{}"'.format(full_command)
         stdin, stdout, stderr = self.ssh_connection.exec_command(sudo_command)
         i = stdout.readline()
+        results = []
         while i != '':
+            results.append(i)
             i = stdout.readline()
             if print:
                 logging.warning(i)
         logging.info("{} completed!".format(full_command))
-        return
+        if return_result:
+            return results
 
     def pwd(self):
         stdin, stdout, stderr = self.ssh_connection.exec_command("pwd")
@@ -71,7 +77,9 @@ class ssh_client:
 
     def wget(self, url, save_path="", file_name="", opts=None):
         if opts is None:
-            opts = {}
+            opts = {
+                "--no-check-certificate": ""
+            }
         if file_name:
             opts["-O"] = file_name
         if save_path:
@@ -146,7 +154,15 @@ class ssh_client:
         command = "iptables"
         self.exec_sudo_command(command, opts=opts, print=False)
 
+    def get_time(self):
+        command = "date '+%a %b %d %H:%M:%S %Y'"
+        return self.exec_command(command, return_result=True)[0].strip('\n')
+
+    def set_time(self, new_time):
+        command = "date -s '{}'".format(new_time)
+        self.exec_sudo_command(command)
+
 
 if __name__ == "__main__":
     s = ssh_client(hostname="public-cd-a5.disalg.cn", port=22, username="leoyhwei", password="Asdf159753")
-    s.heal_net()
+    print(s.set_time("2013-09-27 02:55:57"))

@@ -71,7 +71,13 @@
  直接对db进行操作 给点节点(一个列表对象，单个或多个节点)
 
 ## 调整时钟 clock
- 调整所有节点的时钟，退出后恢复
+ 调整所有节点的时钟，退出后恢复:
+(defn reset-time!
+  "Resets the local node's clock to NTP. If a test is given, resets time on all
+  nodes across the test."
+  ([]     (c/su (c/exec :ntpdate :-p 1 :-b "time.google.com")))
+  ([test] (c/with-test-nodes test (reset-time!))))
+
  
 ## 分割模块
 * 网络关闭方法
