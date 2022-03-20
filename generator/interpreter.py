@@ -5,7 +5,7 @@
 # @File    : interpreter.py
 
 """
-负责翻译generator的操作，处理worker线程，生成与clients和nemeses交互的线程，并记录历史。
+负责翻译generator产生的op，处理worker线程，生成与clients和nemeses交互的线程，并记录历史。
 """
 from functools import partial
 import time
@@ -110,7 +110,11 @@ class NemesisWorker(Worker):
 
 
 class ClientNemesisWorker(Worker):
+    def __init__(self):
+        self.id = None
+
     def open(self, test, id):
+        self.id = id
         if isinstance(id, int):
             nodes = test['nodes']
             return ClientWorker(nodes[id % len(nodes)], None, None)
@@ -118,10 +122,10 @@ class ClientNemesisWorker(Worker):
             return NemesisWorker()
 
     def invoke(self, test, op):
-        return
+        return self.open(test, self.id).invoke(test, op)
 
     def close(self, test):
-        return
+        return self.open(test, self.id).close(test)
 
 
 def client_nemesis_worker():
@@ -131,7 +135,7 @@ def client_nemesis_worker():
 def spawn_worker(test, out: queue, worker, id) -> dict:
     """
     :param test:
-    :param out: 接收已完成操作的队列
+    :param out: 接收已完成op的队列
     :param worker: worker对象
     :param id: worker的id
     :return: dict
@@ -226,9 +230,9 @@ def run(test):
     )
 
     try:
-        outstanding_0 = 0  # 未完成的操作数
-        poll_timeout_0 = 0.0  # 单位：秒
-        history_0 = []  #
+        outstanding_0 = 0  # 未完成的op数
+        poll_timeout_0 = 0.0
+        history_0 = []
 
         def _run_recursive(ctx, gene, outstanding, poll_timeout, history):
             try:
@@ -265,7 +269,7 @@ def run(test):
 
                 if op is None:
                     if outstanding > 0:
-                        # 没有下一个操作，但仍有未完成的操作
+                        # 没有下一个op，但仍有未完成的op
                         # 等待worker
                         _run_recursive(ctx, gene, outstanding,
                                        MAX_PENDING_INTERVAL, history)
@@ -286,8 +290,8 @@ def run(test):
                     _run_recursive(ctx, gene, outstanding,
                                    MAX_PENDING_INTERVAL, history)
 
-                else:  # 得到一个操作调用
-                    # 时间未到，还不能求值
+                else:  # 得到一个op
+                    # 时间未到，还不能处理
                     if time_taken < op['time']:
                         _run_recursive(ctx, gene, outstanding,
                                        op['time'] - time_taken, history)
