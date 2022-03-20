@@ -110,11 +110,7 @@ class NemesisWorker(Worker):
 
 
 class ClientNemesisWorker(Worker):
-    def __init__(self):
-        self.id = None
-
     def open(self, test, id):
-        self.id = id
         if isinstance(id, int):
             nodes = test['nodes']
             return ClientWorker(nodes[id % len(nodes)], None, None)
@@ -122,10 +118,10 @@ class ClientNemesisWorker(Worker):
             return NemesisWorker()
 
     def invoke(self, test, op):
-        return self.open(test, self.id).invoke(test, op)
+        return
 
     def close(self, test):
-        return self.open(test, self.id).close(test)
+        return
 
 
 def client_nemesis_worker():
