@@ -38,7 +38,7 @@ class database_op:
                                           })
 
     def shutdown(self):
-        root_path = self.ssh_client.pwd() + "/tmp"
+        root_path = self.ssh_client.pwd() + "/*"
         self.ssh_client.kill_by_process("etcd")
         self.ssh_client.exec_sudo_command("rm -rf {}".format(root_path))
 

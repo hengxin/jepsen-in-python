@@ -4,13 +4,14 @@
 # @Email   : 2764065464@qq.com
 # @File    : nemesis.py
 import logging
+from nemesis.mode.partition_nemesis import partition_nemesis
 
 
-def partition_nemesis(clients, partition_method):
-    return nemesis(clients, "partition", partition_method=partition_method)
+def nemesis_partition(clients, partition_method):
+    return partition_nemesis(clients, partition_method=partition_method)
 
 
-def clock_nemesis(clients):
+def nemesis_clock(clients):
     return nemesis(clients, "clock")
 
 
@@ -24,15 +25,15 @@ class nemesis:
         if self.mode == "partition":
             client_list = []
             for i in range(0, len(self.clients)):
-                client_list.append(i+1)
+                client_list.append(i + 1)
             net_operation_group = self.partition_method(client_list)
             logging.info("start partition nemesis with judge function {}".format(self.partition_method.__name__))
 
             for key in net_operation_group.keys():
                 target_group = []
                 for i in net_operation_group[key]:
-                    target_group.append(self.clients[i-1].hostname)
-                self.clients[key-1].ssh_client.drop_all_net(target_group)
+                    target_group.append(self.clients[i - 1].hostname)
+                self.clients[key - 1].ssh_client.drop_all_net(target_group)
                 logging.info("isolated [{}] and [{}]".format(self.clients[key - 1].hostname, ",".join(target_group)))
 
     def stop(self):
@@ -40,11 +41,6 @@ class nemesis:
             for client in self.clients:
                 client.ssh_client.heal_net()
                 logging.info("healed netowrk of {}".format(client.hostname))
-
-
-
-
-
 
 # if __name__ == "__main__":
 #
