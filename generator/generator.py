@@ -129,7 +129,7 @@ def next_process(context, thread):
     """仅在 *全局的* context中使用，用以在某线程崩溃时给出该线程的下一个process"""
     if thread != 'nemesis':
         return context['worker'][thread] + \
-               len(list(filter(lambda x: x != 'nemesis', get_all_processes(context))))
+               len(list(filter_builtin(lambda x: x != 'nemesis', get_all_processes(context))))
     else:
         return thread
 
@@ -297,7 +297,7 @@ class Filter(Generator):
                       update(self.gen, test, context, event))
 
 
-def gfilter(f, gen):
+def filter(f, gen):
     return Filter(f, gen)
 
 
