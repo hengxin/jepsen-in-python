@@ -75,8 +75,7 @@ class Generator:
         """
 
     def __str__(self):
-        f = dict((k, v) for k, v in vars(self).items() if not k.startswith("__"))
-        return repr(self) + "\nAttrs: " + pprint.pformat(f, indent=2)
+        return repr(self) + "\nAttrs: " + pprint.pformat(self.__dict__, indent=2)
 
 
 '''
@@ -1054,4 +1053,4 @@ def flip_flop(a, b):
     return FlipFlop(0, [a, b])
 
 
-# TODO GeneratorWrapperClass: Trace FriendlyExceptions CycleTimes
+# TODO GeneratorWrapperClass: Trace CycleTimes

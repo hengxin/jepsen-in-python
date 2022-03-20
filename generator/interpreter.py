@@ -29,7 +29,6 @@ Measured in microseconds.
 MAX_PENDING_INTERVAL = 1
 
 
-# Interface
 class Worker:
     def open(self, test: dict, id):
         """
@@ -194,8 +193,6 @@ def spawn_worker(test, out: queue, worker, id) -> dict:
 
 def goes_in_history(op) -> bool:
     """
-    Should this operation be journaled to the history? We exclude :log and
-    :sleep ops right now.
     :param op:
     :return: True or False
     """
