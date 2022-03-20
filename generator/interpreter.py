@@ -124,6 +124,10 @@ class ClientNemesisWorker(Worker):
         return
 
 
+def client_nemesis_worker():
+    return ClientNemesisWorker()
+
+
 def spawn_worker(test, out: queue, worker, id) -> dict:
     """
     :param test:
@@ -134,11 +138,11 @@ def spawn_worker(test, out: queue, worker, id) -> dict:
     """
 
     _in = queue.Queue(maxsize=1)  # 阻塞队列
+    old_name = threading.current_thread().name
 
+    # 扔进线程池里选一个线程运行
     def evaluate(_worker, _in: queue, _out: queue):
-        old_name = threading.current_thread().name
-        t_name = "jepsen worker " + str(id)
-        threading.current_thread().name = t_name
+        threading.current_thread().name = "jepsen worker " + str(id)
         _worker = _worker.open(test, id)
         exit_flag = False
         while True:
@@ -181,7 +185,7 @@ def spawn_worker(test, out: queue, worker, id) -> dict:
                 threading.current_thread().name = old_name
 
     # 目前使用concurrent.futures模块新建线程去evaluate，效果待验证
-    executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)
+    executor = concurrent.futures.ThreadPoolExecutor()
     future = executor.submit(evaluate, worker, _in, out)
 
     return {
@@ -212,7 +216,7 @@ def run(test):
     worker_ids = gen.get_all_threads(ctx)
     completions = queue.Queue(maxsize=len(worker_ids))
     workers = list(map(
-        partial(spawn_worker, test, completions),
+        partial(spawn_worker, test, completions, client_nemesis_worker()),
         worker_ids))
     invocations = {}
     for worker in workers:

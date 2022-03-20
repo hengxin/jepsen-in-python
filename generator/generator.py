@@ -63,7 +63,7 @@ class Generator:
         :param test:
         :param context:
         :param event:
-        :return: gen'
+        :return: gen2
         """
 
     def op(self, gen, test, context):
@@ -71,7 +71,7 @@ class Generator:
         :param gen:
         :param test:
         :param context:
-        :return:
+        :return: None or [op, gen2]
         """
 
     def __str__(self):
