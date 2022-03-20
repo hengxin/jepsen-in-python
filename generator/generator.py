@@ -25,7 +25,7 @@ def update(gen, test, context, event):
             return [update(cur_gen, test, context, event), *rest]
         else:
             return None
-    else:  # 非上述基本类型，自建类generator
+    else:  # 非上述基本类型，自建包装类generator
         return gen.update(gen, test, context, event)
 
 
@@ -52,7 +52,7 @@ def op(gen, test, context):
                 return op(gen[1:], test, context)
         else:
             return None
-    else:  # 非上述基本类型，自建类generator
+    else:  # 非上述基本类型，自建包装类generator
         return gen.op(gen, test, context)
 
 
@@ -234,6 +234,10 @@ class FriendlyExceptions(Generator):
                      "Event:{}"\
                 .format(repr(e), self.gen, context, event)
             raise Exception(errmsg)
+
+
+def friendly_exceptions(gen):
+    return FriendlyExceptions(gen)
 
 
 class Map(Generator):
