@@ -135,15 +135,17 @@ def spawn_worker(test, out: queue, worker, id) -> dict:
     """
 
     _in = queue.Queue(maxsize=1)  # 阻塞队列
-    thread_name = "jepsen worker " + str(id)
 
     def evaluate(_worker, _in: queue, _out: queue):
+        old_name = threading.current_thread().name
+        t_name = "jepsen worker " + str(id)
+        threading.current_thread().name = t_name
         _worker = _worker.open(test, id)
         exit_flag = False
         while True:
             if exit_flag:
                 break
-            op = _in.get()
+            op = _in.get()  # 阻塞获取元素
             try:
                 match op['type']:
                     case 'exit':
@@ -177,14 +179,15 @@ def spawn_worker(test, out: queue, worker, id) -> dict:
 
             finally:
                 _worker.close(test)
+                threading.current_thread().name = old_name
 
-    # 具体实现待确定
+    # 目前使用concurrent.futures模块新建线程去evaluate，效果待验证
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)
     future = executor.submit(evaluate, worker, _in, out)
 
     return {
-        "id": id,
-        "in": _in,
+        "id": id,  # worker id
+        "in": _in,  # 将invocation交给worker
         "future": future
     }
 
@@ -207,9 +210,9 @@ def run(test):
     :param test:
     :return:
     """
-    gen.init()
-    ctx = gen.context(test)
-    worker_ids = gen.all_threads(ctx)
+    # gen.init()
+    ctx = gen.build_context(test)
+    worker_ids = gen.get_all_threads(ctx)
     completions = queue.Queue(maxsize=len(worker_ids))
     workers = list(map(
         partial(spawn_worker, test, completions),
@@ -217,11 +220,13 @@ def run(test):
     invocations = {}
     for worker in workers:
         invocations[worker['id']] = worker['in']
-    gene = gen.validate(gen.friendly_exceptions(test['generator']))
+    gene = gen.validate(
+        gen.friendly_exceptions(test['generator'])
+    )
 
     try:
         outstanding_0 = 0  # 未完成的操作数
-        poll_timeout_0 = 0  # 单位：秒
+        poll_timeout_0 = 0.0  # 单位：秒
         history_0 = []  #
 
         def _run_recursive(ctx, gene, outstanding, poll_timeout, history):
@@ -287,7 +292,8 @@ def run(test):
                                        op['time'] - time_taken, history)
                     else:
                         cur_thread = gen.process2thread(ctx, op['process'])
-                        _ = invocations[cur_thread].put(op)
+                        in_queue = invocations[cur_thread]
+                        in_queue.put(op)
                         # 更新时间戳及线程占用信息
                         ctx.update({"time": op['time']})
                         ctx['free-threads'].remove(cur_thread)
@@ -311,7 +317,7 @@ def run(test):
             msg = "{} is cancelled?:{!r}"
             logging.debug(msg.format(fut, res))
 
-        # 2. 若1无效，等所有worker完成后退出，并更新队列状态
+        # 2. 若1无效，轮询等所有worker完成后退出，并更新队列状态
         it = iter(workers)
         cursor = next(it)
         while True:
