@@ -33,8 +33,7 @@ def op(gen, test, context):
     if gen is None:
         return None
     elif isfunction(gen):
-        res = gen(test, context) \
-            if gen.__code__.co_argcount == 2 else gen()
+        res = gen(test, context) if gen.__code__.co_argcount == 2 else gen()
         if res:
             return op([res, gen], test, context)
         else:
@@ -279,7 +278,7 @@ def f_map(f, gen):
 class Filter(Generator):
     def __init__(self, f, gen):
         """
-        :param f: 过滤函数
+        :param f: 过滤函数，接收一个op参数，当且仅当op状态为pending或函数调用结果为True时返回 [op, gen2]
         :param gen:
         """
         self.f = f
@@ -575,12 +574,16 @@ def reserve(*args):
     return Reserve(ranges, all_ranges, gens)
 
 
-def soonest_op_dict(d1, d2):
+def soonest_op_dict(d1, d2) -> dict:
     """
     接受两个字典作为参数，每个字典有如下字段：
     op:         一个操作
     weight:     权重，int，可选
     :return 能更早产生op的那个dict
+    规则：1. 不为 None 的更快
+         2. op字段值不为 pending 的更快
+         3. op["time"]更小的更快
+         4. op["time"]相同时，根据weight字段进行一次带权随机
     """
     if d1 is None:
         return d2
@@ -598,8 +601,10 @@ def soonest_op_dict(d1, d2):
         w = w1 + w2
         if random.randint(0, w) < w1:
             d1["weight"] = w
+            return d1
         else:
             d2["weight"] = w
+            return d2
 
     elif t1 < t2:
         return d1
@@ -630,7 +635,8 @@ class Any(Generator):
                          initial=None)
         if soonest:
             gens[soonest["i"]] = soonest["gen2"]
-            return Any(gens)
+            return [soonest["op"],
+                    Any(gens)]
         else:
             return None
 
@@ -639,6 +645,9 @@ class Any(Generator):
 
 
 def any(*args):
+    """ 接收多个generator将它们组装成一个大generator。
+    op可从里面任意一个抛出（更准确地说，每次抛出 'soonest' 的那个）。
+    update传播到所有generator。 """
     match len(args):
         case 0:
             return None

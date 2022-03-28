@@ -13,6 +13,9 @@ from nemesis.judge import *
 import time
 import os
 import random
+from fastcore.transform import Pipeline
+from functools import partial
+from generator import generator as gen, interpreter as gen_inter
 
 
 def operation(database_connection, history):

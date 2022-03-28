@@ -24,4 +24,5 @@ def compute_relative_time() -> float:
     计算从relative_time_origin的相对时间，单位：浮点秒
     """
     global relative_time_origin
+    assert relative_time_origin  # 须在调用with_relative_time函数设置起始时间后再调用这个
     return time.time() - relative_time_origin
