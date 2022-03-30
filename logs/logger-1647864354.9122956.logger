@@ -1,0 +1,465 @@
+[2022-03-21 20:05:54,953] [INFO] [transport.py:_log:1873] Connected (version 2.0, client OpenSSH_7.6p1)
+[2022-03-21 20:05:55,078] [INFO] [transport.py:_log:1873] Authentication (publickey) failed.
+[2022-03-21 20:05:55,111] [INFO] [transport.py:_log:1873] Authentication (password) successful!
+[2022-03-21 20:05:56,247] [INFO] [ssh.py:exec_sudo_command:60] mkdir /root/tmp  completed!
+[2022-03-21 20:05:56,278] [INFO] [transport.py:_log:1873] Connected (version 2.0, client OpenSSH_7.6p1)
+[2022-03-21 20:05:56,413] [INFO] [transport.py:_log:1873] Authentication (publickey) failed.
+[2022-03-21 20:05:56,449] [INFO] [transport.py:_log:1873] Authentication (password) successful!
+[2022-03-21 20:05:57,800] [INFO] [ssh.py:exec_sudo_command:60] mkdir /root/tmp  completed!
+[2022-03-21 20:05:57,990] [INFO] [transport.py:_log:1873] Connected (version 2.0, client OpenSSH_8.2p1)
+[2022-03-21 20:05:58,204] [INFO] [transport.py:_log:1873] Authentication (publickey) failed.
+[2022-03-21 20:05:58,289] [INFO] [transport.py:_log:1873] Authentication (password) successful!
+[2022-03-21 20:05:58,665] [INFO] [ssh.py:exec_sudo_command:60] mkdir /home/leoyhwei/tmp  completed!
+[2022-03-21 20:05:58,822] [INFO] [transport.py:_log:1873] Connected (version 2.0, client OpenSSH_8.2p1)
+[2022-03-21 20:05:59,098] [INFO] [transport.py:_log:1873] Authentication (publickey) failed.
+[2022-03-21 20:05:59,177] [INFO] [transport.py:_log:1873] Authentication (password) successful!
+[2022-03-21 20:05:59,561] [INFO] [ssh.py:exec_sudo_command:60] mkdir /home/leoyhwei/tmp  completed!
+[2022-03-21 20:05:59,759] [INFO] [transport.py:_log:1873] Connected (version 2.0, client OpenSSH_8.2p1)
+[2022-03-21 20:06:00,022] [INFO] [transport.py:_log:1873] Authentication (publickey) failed.
+[2022-03-21 20:06:00,104] [INFO] [transport.py:_log:1873] Authentication (password) successful!
+[2022-03-21 20:06:00,477] [INFO] [ssh.py:exec_sudo_command:60] mkdir /home/leoyhwei/tmp  completed!
+[2022-03-21 20:06:02,887] [INFO] [ssh.py:exec_sudo_command:60] wget https://storage.googleapis.com/etcd/v3.1.5/etcd-v3.1.5-linux-amd64.tar.gz --no-check-certificate  -P /root/tmp  completed!
+[2022-03-21 20:06:02,906] [INFO] [ssh.py:exec_sudo_command:60] wget https://storage.googleapis.com/etcd/v3.1.5/etcd-v3.1.5-linux-amd64.tar.gz --no-check-certificate  -P /home/leoyhwei/tmp  completed!
+[2022-03-21 20:06:02,979] [INFO] [ssh.py:exec_sudo_command:60] mkdir /root/tmp//etcd  completed!
+[2022-03-21 20:06:03,087] [INFO] [ssh.py:exec_sudo_command:60] wget https://storage.googleapis.com/etcd/v3.1.5/etcd-v3.1.5-linux-amd64.tar.gz --no-check-certificate  -P /home/leoyhwei/tmp  completed!
+[2022-03-21 20:06:03,095] [INFO] [ssh.py:exec_sudo_command:60] mkdir /home/leoyhwei/tmp//etcd  completed!
+[2022-03-21 20:06:03,254] [INFO] [ssh.py:exec_sudo_command:60] mkdir /home/leoyhwei/tmp//etcd  completed!
+[2022-03-21 20:06:03,320] [INFO] [ssh.py:exec_sudo_command:60] tar -zxvf /root/tmp/etcd-v3.1.5-linux-amd64.tar.gz -C /root/tmp//etcd --strip-components 1  completed!
+[2022-03-21 20:06:03,414] [INFO] [ssh.py:exec_sudo_command:60] touch /root/tmp//etcd.log  completed!
+[2022-03-21 20:06:03,422] [INFO] [ssh.py:exec_sudo_command:60] tar -zxvf /home/leoyhwei/tmp/etcd-v3.1.5-linux-amd64.tar.gz -C /home/leoyhwei/tmp//etcd --strip-components 1  completed!
+[2022-03-21 20:06:03,425] [INFO] [ssh.py:exec_sudo_command:60] wget https://storage.googleapis.com/etcd/v3.1.5/etcd-v3.1.5-linux-amd64.tar.gz --no-check-certificate  -P /home/leoyhwei/tmp  completed!
+[2022-03-21 20:06:03,579] [INFO] [ssh.py:exec_sudo_command:60] tar -zxvf /home/leoyhwei/tmp/etcd-v3.1.5-linux-amd64.tar.gz -C /home/leoyhwei/tmp//etcd --strip-components 1  completed!
+[2022-03-21 20:06:03,582] [INFO] [ssh.py:exec_sudo_command:60] touch /home/leoyhwei/tmp//etcd.log  completed!
+[2022-03-21 20:06:03,586] [INFO] [ssh.py:exec_sudo_command:60] mkdir /home/leoyhwei/tmp//etcd  completed!
+[2022-03-21 20:06:03,741] [INFO] [ssh.py:exec_sudo_command:60] touch /home/leoyhwei/tmp//etcd.log  completed!
+[2022-03-21 20:06:04,024] [INFO] [ssh.py:exec_sudo_command:60] tar -zxvf /home/leoyhwei/tmp/etcd-v3.1.5-linux-amd64.tar.gz -C /home/leoyhwei/tmp//etcd --strip-components 1  completed!
+[2022-03-21 20:06:04,185] [INFO] [ssh.py:exec_sudo_command:60] touch /home/leoyhwei/tmp//etcd.log  completed!
+[2022-03-21 20:06:05,815] [INFO] [ssh.py:exec_sudo_command:60] wget https://storage.googleapis.com/etcd/v3.1.5/etcd-v3.1.5-linux-amd64.tar.gz --no-check-certificate  -P /root/tmp  completed!
+[2022-03-21 20:06:05,957] [INFO] [ssh.py:exec_sudo_command:60] mkdir /root/tmp//etcd  completed!
+[2022-03-21 20:06:06,772] [INFO] [ssh.py:exec_sudo_command:60] tar -zxvf /root/tmp/etcd-v3.1.5-linux-amd64.tar.gz -C /root/tmp//etcd --strip-components 1  completed!
+[2022-03-21 20:06:07,009] [INFO] [ssh.py:exec_sudo_command:60] touch /root/tmp//etcd.log  completed!
+[2022-03-21 20:06:20,512] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:06:20,512] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '2'}
+[2022-03-21 20:06:20,617] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:06:20,617] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '2'}
+[2022-03-21 20:06:20,618] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:06:20,618] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:20,676] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:06:20,676] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 2}
+[2022-03-21 20:06:20,677] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:06:20,677] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '3'}
+[2022-03-21 20:06:20,735] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:06:20,736] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '3'}
+[2022-03-21 20:06:20,737] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:06:20,737] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '4'}
+[2022-03-21 20:06:20,940] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:06:20,940] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '4'}
+[2022-03-21 20:06:20,941] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:06:20,941] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:20,997] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:06:20,998] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:06:20,998] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:06:20,998] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:21,110] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:06:21,111] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:06:21,112] [INFO] [client.py:operate:38] public-cd-a5.disalg.cn
+[2022-03-21 20:06:21,113] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:21,294] [INFO] [client.py:operate:42] public-cd-a5.disalg.cn
+[2022-03-21 20:06:21,294] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:06:21,294] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:06:21,294] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:21,370] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:06:21,370] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:06:21,371] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:06:21,371] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:21,476] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:06:21,477] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:06:21,477] [INFO] [client.py:operate:38] public-cd-a5.disalg.cn
+[2022-03-21 20:06:21,477] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['3', '4']}
+[2022-03-21 20:06:21,586] [INFO] [client.py:operate:42] public-cd-a5.disalg.cn
+[2022-03-21 20:06:21,588] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['3', '4']}
+[2022-03-21 20:06:21,588] [INFO] [client.py:operate:38] public-cd-a5.disalg.cn
+[2022-03-21 20:06:21,589] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:21,700] [INFO] [client.py:operate:42] public-cd-a5.disalg.cn
+[2022-03-21 20:06:21,701] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:06:21,701] [INFO] [client.py:operate:38] public-cd-a5.disalg.cn
+[2022-03-21 20:06:21,701] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:21,814] [INFO] [client.py:operate:42] public-cd-a5.disalg.cn
+[2022-03-21 20:06:21,814] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:06:21,815] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:06:21,815] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['2', '4']}
+[2022-03-21 20:06:21,921] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:06:21,921] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['2', '4']}
+[2022-03-21 20:06:21,921] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:06:21,921] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '5'}
+[2022-03-21 20:06:21,978] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:06:21,978] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '5'}
+[2022-03-21 20:06:21,980] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:06:21,981] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '4'}
+[2022-03-21 20:06:22,088] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:06:22,088] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '4'}
+[2022-03-21 20:06:22,088] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:06:22,089] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:22,277] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:06:22,277] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:06:22,279] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:06:22,279] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:22,388] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:06:22,388] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:06:22,389] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:06:22,389] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:22,495] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:06:22,495] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:06:22,496] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:06:22,496] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:22,545] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:06:22,545] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:06:22,546] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:06:22,546] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:22,661] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:06:22,661] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:06:22,662] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:06:22,662] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '2'}
+[2022-03-21 20:06:22,718] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:06:22,718] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '2'}
+[2022-03-21 20:06:22,719] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:06:22,720] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['2', '4']}
+[2022-03-21 20:06:22,775] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:06:22,776] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'cas', 'value': ['2', '4']}
+[2022-03-21 20:06:22,776] [INFO] [client.py:operate:38] public-cd-a5.disalg.cn
+[2022-03-21 20:06:22,777] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:22,885] [INFO] [client.py:operate:42] public-cd-a5.disalg.cn
+[2022-03-21 20:06:22,886] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:06:22,887] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:06:22,887] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '4'}
+[2022-03-21 20:06:22,998] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:06:22,998] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '4'}
+[2022-03-21 20:06:22,999] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:06:22,999] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:23,111] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:06:23,112] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:06:23,112] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:06:23,112] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:23,161] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:06:23,161] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:06:23,162] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:06:23,162] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '2'}
+[2022-03-21 20:06:23,211] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:06:23,211] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '2'}
+[2022-03-21 20:06:23,212] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:06:23,212] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '2'}
+[2022-03-21 20:06:23,325] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:06:23,325] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '2'}
+[2022-03-21 20:06:23,326] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:06:23,326] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['4', '2']}
+[2022-03-21 20:06:23,376] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:06:23,377] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['4', '2']}
+[2022-03-21 20:06:23,377] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:06:23,377] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['5', '3']}
+[2022-03-21 20:06:23,434] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:06:23,434] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['5', '3']}
+[2022-03-21 20:06:23,435] [INFO] [client.py:operate:38] public-cd-a5.disalg.cn
+[2022-03-21 20:06:23,436] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['4', '3']}
+[2022-03-21 20:06:23,545] [INFO] [client.py:operate:42] public-cd-a5.disalg.cn
+[2022-03-21 20:06:23,546] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['4', '3']}
+[2022-03-21 20:06:23,546] [INFO] [partition_nemesis.py:start:21] start partition nemesis with judge function majorities_ring_stochastic
+[2022-03-21 20:06:23,581] [INFO] [ssh.py:exec_sudo_command:60] iptables -A INPUT -s 42.192.52.249,public-cd-a3.disalg.cn -j DROP -w   completed!
+[2022-03-21 20:06:23,581] [INFO] [partition_nemesis.py:start:28] isolated [119.3.69.98] and [42.192.52.249,public-cd-a3.disalg.cn]
+[2022-03-21 20:06:23,661] [INFO] [ssh.py:exec_sudo_command:60] iptables -A INPUT -s 119.3.69.98,public-cd-a5.disalg.cn -j DROP -w   completed!
+[2022-03-21 20:06:23,662] [INFO] [partition_nemesis.py:start:28] isolated [42.192.52.249] and [119.3.69.98,public-cd-a5.disalg.cn]
+[2022-03-21 20:06:23,746] [INFO] [ssh.py:exec_sudo_command:60] iptables -A INPUT -s 119.3.69.98,public-cd-a4.disalg.cn -j DROP -w   completed!
+[2022-03-21 20:06:23,747] [INFO] [partition_nemesis.py:start:28] isolated [public-cd-a3.disalg.cn] and [119.3.69.98,public-cd-a4.disalg.cn]
+[2022-03-21 20:06:23,836] [INFO] [ssh.py:exec_sudo_command:60] iptables -A INPUT -s public-cd-a3.disalg.cn,public-cd-a5.disalg.cn -j DROP -w   completed!
+[2022-03-21 20:06:23,837] [INFO] [partition_nemesis.py:start:28] isolated [public-cd-a4.disalg.cn] and [public-cd-a3.disalg.cn,public-cd-a5.disalg.cn]
+[2022-03-21 20:06:23,921] [INFO] [ssh.py:exec_sudo_command:60] iptables -A INPUT -s 42.192.52.249,public-cd-a4.disalg.cn -j DROP -w   completed!
+[2022-03-21 20:06:23,922] [INFO] [partition_nemesis.py:start:28] isolated [public-cd-a5.disalg.cn] and [42.192.52.249,public-cd-a4.disalg.cn]
+[2022-03-21 20:06:23,924] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:06:23,924] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['5', '5']}
+[2022-03-21 20:06:30,939] [ERROR] [pyjepsen.py:operation:43] somthing wrong
+[2022-03-21 20:06:30,939] [ERROR] [pyjepsen.py:operation:44] <class 'Exception'>
+[2022-03-21 20:06:30,941] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:06:30,941] [INFO] [client.py:operate:43] {'type': 'info', 'f': 'cas', 'value': None}
+[2022-03-21 20:06:30,943] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:06:30,943] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '5'}
+[2022-03-21 20:06:31,049] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:06:31,049] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '5'}
+[2022-03-21 20:06:31,050] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:06:31,050] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['4', '3']}
+[2022-03-21 20:06:31,157] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:06:31,157] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['4', '3']}
+[2022-03-21 20:06:31,157] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:06:31,158] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '3'}
+[2022-03-21 20:06:38,747] [ERROR] [pyjepsen.py:operation:43] somthing wrong
+[2022-03-21 20:06:38,748] [ERROR] [pyjepsen.py:operation:44] <class 'Exception'>
+[2022-03-21 20:06:38,748] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:06:38,749] [INFO] [client.py:operate:43] {'type': 'info', 'f': 'write', 'value': None}
+[2022-03-21 20:06:38,749] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:06:38,750] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:38,800] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:06:38,800] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 5}
+[2022-03-21 20:06:38,801] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:06:38,801] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['1', '3']}
+[2022-03-21 20:06:38,909] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:06:38,909] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['1', '3']}
+[2022-03-21 20:06:38,910] [INFO] [client.py:operate:38] public-cd-a5.disalg.cn
+[2022-03-21 20:06:38,910] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:45,945] [ERROR] [pyjepsen.py:operation:43] somthing wrong
+[2022-03-21 20:06:45,945] [ERROR] [pyjepsen.py:operation:44] <class 'Exception'>
+[2022-03-21 20:06:45,946] [INFO] [client.py:operate:42] public-cd-a5.disalg.cn
+[2022-03-21 20:06:45,946] [INFO] [client.py:operate:43] {'type': 'info', 'f': 'read', 'value': None}
+[2022-03-21 20:06:45,948] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:06:45,948] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:06:52,964] [ERROR] [pyjepsen.py:operation:43] somthing wrong
+[2022-03-21 20:06:52,964] [ERROR] [pyjepsen.py:operation:44] <class 'Exception'>
+[2022-03-21 20:06:52,965] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:06:52,965] [INFO] [client.py:operate:43] {'type': 'info', 'f': 'read', 'value': None}
+[2022-03-21 20:06:52,965] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:06:52,965] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['5', '3']}
+[2022-03-21 20:06:53,071] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:06:53,071] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'cas', 'value': ['5', '3']}
+[2022-03-21 20:06:53,072] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:06:53,072] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '5'}
+[2022-03-21 20:06:53,122] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:06:53,122] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '5'}
+[2022-03-21 20:06:53,123] [INFO] [client.py:operate:38] public-cd-a5.disalg.cn
+[2022-03-21 20:06:53,123] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '4'}
+[2022-03-21 20:07:00,157] [ERROR] [pyjepsen.py:operation:43] somthing wrong
+[2022-03-21 20:07:00,157] [ERROR] [pyjepsen.py:operation:44] <class 'Exception'>
+[2022-03-21 20:07:00,158] [INFO] [client.py:operate:42] public-cd-a5.disalg.cn
+[2022-03-21 20:07:00,159] [INFO] [client.py:operate:43] {'type': 'info', 'f': 'write', 'value': None}
+[2022-03-21 20:07:00,159] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:07:00,159] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:00,267] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:07:00,267] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 5}
+[2022-03-21 20:07:00,268] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:07:00,268] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '4'}
+[2022-03-21 20:07:00,378] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:07:00,378] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '4'}
+[2022-03-21 20:07:00,379] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:07:00,379] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['2', '2']}
+[2022-03-21 20:07:00,486] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:07:00,487] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['2', '2']}
+[2022-03-21 20:07:00,488] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:07:00,488] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:07,777] [ERROR] [pyjepsen.py:operation:43] somthing wrong
+[2022-03-21 20:07:07,778] [ERROR] [pyjepsen.py:operation:44] <class 'Exception'>
+[2022-03-21 20:07:07,780] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:07:07,780] [INFO] [client.py:operate:43] {'type': 'info', 'f': 'read', 'value': None}
+[2022-03-21 20:07:07,782] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:07:07,782] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['1', '3']}
+[2022-03-21 20:07:07,889] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:07:07,889] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['1', '3']}
+[2022-03-21 20:07:07,889] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:07:07,890] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '4'}
+[2022-03-21 20:07:07,997] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:07:07,997] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '4'}
+[2022-03-21 20:07:07,998] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:07:07,998] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['2', '1']}
+[2022-03-21 20:07:08,108] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:07:08,108] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['2', '1']}
+[2022-03-21 20:07:08,109] [INFO] [client.py:operate:38] public-cd-a5.disalg.cn
+[2022-03-21 20:07:08,109] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:15,145] [ERROR] [pyjepsen.py:operation:43] somthing wrong
+[2022-03-21 20:07:15,145] [ERROR] [pyjepsen.py:operation:44] <class 'Exception'>
+[2022-03-21 20:07:15,146] [INFO] [client.py:operate:42] public-cd-a5.disalg.cn
+[2022-03-21 20:07:15,146] [INFO] [client.py:operate:43] {'type': 'info', 'f': 'read', 'value': None}
+[2022-03-21 20:07:15,147] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:07:15,147] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:15,199] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:07:15,199] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:07:15,199] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:07:15,200] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:15,250] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:07:15,251] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:07:15,252] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:07:15,252] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:15,360] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:07:15,361] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:07:15,363] [INFO] [client.py:operate:38] public-cd-a5.disalg.cn
+[2022-03-21 20:07:15,363] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:22,400] [ERROR] [pyjepsen.py:operation:43] somthing wrong
+[2022-03-21 20:07:22,400] [ERROR] [pyjepsen.py:operation:44] <class 'Exception'>
+[2022-03-21 20:07:22,401] [INFO] [client.py:operate:42] public-cd-a5.disalg.cn
+[2022-03-21 20:07:22,401] [INFO] [client.py:operate:43] {'type': 'info', 'f': 'read', 'value': None}
+[2022-03-21 20:07:22,401] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:07:22,401] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '4'}
+[2022-03-21 20:07:22,507] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:07:22,507] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '4'}
+[2022-03-21 20:07:22,508] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:07:22,508] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '2'}
+[2022-03-21 20:07:22,619] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:07:22,619] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '2'}
+[2022-03-21 20:07:22,619] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:07:22,619] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '2'}
+[2022-03-21 20:07:22,732] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:07:22,733] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '2'}
+[2022-03-21 20:07:22,734] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:07:22,734] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:22,847] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:07:22,847] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 2}
+[2022-03-21 20:07:22,848] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:07:22,849] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '5'}
+[2022-03-21 20:07:24,071] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:07:24,071] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '5'}
+[2022-03-21 20:07:24,072] [INFO] [client.py:operate:38] public-cd-a5.disalg.cn
+[2022-03-21 20:07:24,072] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '4'}
+[2022-03-21 20:07:31,107] [ERROR] [pyjepsen.py:operation:43] somthing wrong
+[2022-03-21 20:07:31,107] [ERROR] [pyjepsen.py:operation:44] <class 'Exception'>
+[2022-03-21 20:07:31,108] [INFO] [client.py:operate:42] public-cd-a5.disalg.cn
+[2022-03-21 20:07:31,108] [INFO] [client.py:operate:43] {'type': 'info', 'f': 'write', 'value': None}
+[2022-03-21 20:07:31,109] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:07:31,109] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '2'}
+[2022-03-21 20:07:31,158] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:07:31,158] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '2'}
+[2022-03-21 20:07:31,194] [INFO] [ssh.py:exec_sudo_command:60] iptables -F  -w   completed!
+[2022-03-21 20:07:31,288] [INFO] [ssh.py:exec_sudo_command:60] iptables -X  -w   completed!
+[2022-03-21 20:07:31,289] [INFO] [partition_nemesis.py:stop:34] healed netowrk of 119.3.69.98
+[2022-03-21 20:07:31,328] [INFO] [ssh.py:exec_sudo_command:60] iptables -F  -w   completed!
+[2022-03-21 20:07:31,420] [INFO] [ssh.py:exec_sudo_command:60] iptables -X  -w   completed!
+[2022-03-21 20:07:31,420] [INFO] [partition_nemesis.py:stop:34] healed netowrk of 42.192.52.249
+[2022-03-21 20:07:31,504] [INFO] [ssh.py:exec_sudo_command:60] iptables -F  -w   completed!
+[2022-03-21 20:07:31,622] [INFO] [ssh.py:exec_sudo_command:60] iptables -X  -w   completed!
+[2022-03-21 20:07:31,623] [INFO] [partition_nemesis.py:stop:34] healed netowrk of public-cd-a3.disalg.cn
+[2022-03-21 20:07:31,705] [INFO] [ssh.py:exec_sudo_command:60] iptables -F  -w   completed!
+[2022-03-21 20:07:31,823] [INFO] [ssh.py:exec_sudo_command:60] iptables -X  -w   completed!
+[2022-03-21 20:07:31,823] [INFO] [partition_nemesis.py:stop:34] healed netowrk of public-cd-a4.disalg.cn
+[2022-03-21 20:07:31,906] [INFO] [ssh.py:exec_sudo_command:60] iptables -F  -w   completed!
+[2022-03-21 20:07:32,025] [INFO] [ssh.py:exec_sudo_command:60] iptables -X  -w   completed!
+[2022-03-21 20:07:32,025] [INFO] [partition_nemesis.py:stop:34] healed netowrk of public-cd-a5.disalg.cn
+[2022-03-21 20:07:32,027] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:07:32,027] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:32,135] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:07:32,135] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 2}
+[2022-03-21 20:07:32,136] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:07:32,136] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:39,238] [ERROR] [pyjepsen.py:operation:43] somthing wrong
+[2022-03-21 20:07:39,239] [ERROR] [pyjepsen.py:operation:44] <class 'Exception'>
+[2022-03-21 20:07:39,240] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:07:39,240] [INFO] [client.py:operate:43] {'type': 'info', 'f': 'read', 'value': None}
+[2022-03-21 20:07:39,241] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:07:39,241] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['5', '2']}
+[2022-03-21 20:07:39,349] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:07:39,349] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['5', '2']}
+[2022-03-21 20:07:39,350] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:07:39,350] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '4'}
+[2022-03-21 20:07:39,400] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:07:39,400] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '4'}
+[2022-03-21 20:07:39,400] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:07:39,401] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['5', '4']}
+[2022-03-21 20:07:39,451] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:07:39,451] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['5', '4']}
+[2022-03-21 20:07:39,452] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:07:39,452] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['4', '1']}
+[2022-03-21 20:07:39,557] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:07:39,558] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'cas', 'value': ['4', '1']}
+[2022-03-21 20:07:39,558] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:07:39,558] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['3', '4']}
+[2022-03-21 20:07:40,177] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:07:40,177] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['3', '4']}
+[2022-03-21 20:07:40,177] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:07:40,178] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '3'}
+[2022-03-21 20:07:40,283] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:07:40,283] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '3'}
+[2022-03-21 20:07:40,284] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:07:40,284] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '1'}
+[2022-03-21 20:07:40,389] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:07:40,389] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '1'}
+[2022-03-21 20:07:40,389] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:07:40,390] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:40,439] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:07:40,439] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 1}
+[2022-03-21 20:07:40,440] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:07:40,440] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '3'}
+[2022-03-21 20:07:40,509] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:07:40,509] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '3'}
+[2022-03-21 20:07:40,510] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:07:40,510] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:40,829] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:07:40,830] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 3}
+[2022-03-21 20:07:40,832] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:07:40,832] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '4'}
+[2022-03-21 20:07:40,941] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:07:40,942] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '4'}
+[2022-03-21 20:07:40,942] [INFO] [client.py:operate:38] public-cd-a5.disalg.cn
+[2022-03-21 20:07:40,942] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '3'}
+[2022-03-21 20:07:41,061] [INFO] [client.py:operate:42] public-cd-a5.disalg.cn
+[2022-03-21 20:07:41,061] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '3'}
+[2022-03-21 20:07:41,061] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:07:41,061] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['2', '1']}
+[2022-03-21 20:07:41,166] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:07:41,166] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['2', '1']}
+[2022-03-21 20:07:41,166] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:07:41,166] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['5', '2']}
+[2022-03-21 20:07:41,218] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:07:41,218] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['5', '2']}
+[2022-03-21 20:07:41,219] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:07:41,219] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['4', '5']}
+[2022-03-21 20:07:41,327] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:07:41,327] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['4', '5']}
+[2022-03-21 20:07:41,327] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:07:41,328] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['4', '4']}
+[2022-03-21 20:07:41,436] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:07:41,436] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['4', '4']}
+[2022-03-21 20:07:41,437] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:07:41,437] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:41,497] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:07:41,497] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 3}
+[2022-03-21 20:07:41,497] [INFO] [client.py:operate:38] public-cd-a5.disalg.cn
+[2022-03-21 20:07:41,498] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['5', '4']}
+[2022-03-21 20:07:41,619] [INFO] [client.py:operate:42] public-cd-a5.disalg.cn
+[2022-03-21 20:07:41,619] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['5', '4']}
+[2022-03-21 20:07:41,621] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:07:41,621] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '1'}
+[2022-03-21 20:07:41,678] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:07:41,679] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '1'}
+[2022-03-21 20:07:41,680] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:07:41,680] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:41,788] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:07:41,788] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 1}
+[2022-03-21 20:07:41,789] [INFO] [client.py:operate:38] public-cd-a4.disalg.cn
+[2022-03-21 20:07:41,790] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '5'}
+[2022-03-21 20:07:41,894] [INFO] [client.py:operate:42] public-cd-a4.disalg.cn
+[2022-03-21 20:07:41,895] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '5'}
+[2022-03-21 20:07:41,897] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:07:41,897] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:41,956] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:07:41,956] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 5}
+[2022-03-21 20:07:41,957] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:07:41,957] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:42,015] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:07:42,015] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 5}
+[2022-03-21 20:07:42,016] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:07:42,016] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '3'}
+[2022-03-21 20:07:42,065] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:07:42,066] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '3'}
+[2022-03-21 20:07:42,067] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:07:42,067] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['1', '5']}
+[2022-03-21 20:07:42,176] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:07:42,176] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['1', '5']}
+[2022-03-21 20:07:42,178] [INFO] [client.py:operate:38] public-cd-a3.disalg.cn
+[2022-03-21 20:07:42,178] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'write', 'value': '4'}
+[2022-03-21 20:07:42,285] [INFO] [client.py:operate:42] public-cd-a3.disalg.cn
+[2022-03-21 20:07:42,285] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'write', 'value': '4'}
+[2022-03-21 20:07:42,286] [INFO] [client.py:operate:38] 42.192.52.249
+[2022-03-21 20:07:42,286] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'read', 'value': None}
+[2022-03-21 20:07:42,336] [INFO] [client.py:operate:42] 42.192.52.249
+[2022-03-21 20:07:42,337] [INFO] [client.py:operate:43] {'type': 'ok', 'f': 'read', 'value': 4}
+[2022-03-21 20:07:42,337] [INFO] [client.py:operate:38] 119.3.69.98
+[2022-03-21 20:07:42,337] [INFO] [client.py:operate:39] {'type': 'invoke', 'f': 'cas', 'value': ['5', '4']}
+[2022-03-21 20:07:42,404] [INFO] [client.py:operate:42] 119.3.69.98
+[2022-03-21 20:07:42,405] [INFO] [client.py:operate:43] {'type': 'fail', 'f': 'cas', 'value': ['5', '4']}
+[2022-03-21 20:07:42,554] [INFO] [ssh.py:exec_sudo_command:60] /root/tmp/etcd/etcd --log-output stdout --name 119.3.69.98 --listen-peer-urls http://0.0.0.0:2380 --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://119.3.69.98:2379 --initial-cluster-state new --initial-advertise-peer-urls http://119.3.69.98:2380 --initial-cluster 42.192.52.249=http://42.192.52.249:2380,119.3.69.98=http://119.3.69.98:2380,public-cd-a3.disalg.cn=http://public-cd-a3.disalg.cn:2380,public-cd-a4.disalg.cn=http://public-cd-a4.disalg.cn:2380,public-cd-a5.disalg.cn=http://public-cd-a5.disalg.cn:2380 1>/root/tmp/etcd.log   completed!
+[2022-03-21 20:07:42,567] [INFO] [ssh.py:exec_command:43] ps -ef|grep etcd|grep -v grep|awk '{print $2}'|xargs sudo kill -9  completed!
+[2022-03-21 20:07:42,619] [INFO] [ssh.py:exec_sudo_command:60] rm -rf /root/*  completed!
+[2022-03-21 20:07:42,752] [INFO] [ssh.py:exec_sudo_command:60] /root/tmp/etcd/etcd --log-output stdout --name 42.192.52.249 --listen-peer-urls http://0.0.0.0:2380 --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://42.192.52.249:2379 --initial-cluster-state new --initial-advertise-peer-urls http://42.192.52.249:2380 --initial-cluster 42.192.52.249=http://42.192.52.249:2380,119.3.69.98=http://119.3.69.98:2380,public-cd-a3.disalg.cn=http://public-cd-a3.disalg.cn:2380,public-cd-a4.disalg.cn=http://public-cd-a4.disalg.cn:2380,public-cd-a5.disalg.cn=http://public-cd-a5.disalg.cn:2380 1>/root/tmp/etcd.log   completed!
+[2022-03-21 20:07:42,753] [INFO] [ssh.py:exec_command:43] ps -ef|grep etcd|grep -v grep|awk '{print $2}'|xargs sudo kill -9  completed!
+[2022-03-21 20:07:42,851] [INFO] [ssh.py:exec_sudo_command:60] rm -rf /root/*  completed!
+[2022-03-21 20:07:43,055] [INFO] [ssh.py:exec_sudo_command:60] /home/leoyhwei/tmp/etcd/etcd --log-output stdout --name public-cd-a3.disalg.cn --listen-peer-urls http://0.0.0.0:2380 --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://public-cd-a3.disalg.cn:2379 --initial-cluster-state new --initial-advertise-peer-urls http://public-cd-a3.disalg.cn:2380 --initial-cluster 42.192.52.249=http://42.192.52.249:2380,119.3.69.98=http://119.3.69.98:2380,public-cd-a3.disalg.cn=http://public-cd-a3.disalg.cn:2380,public-cd-a4.disalg.cn=http://public-cd-a4.disalg.cn:2380,public-cd-a5.disalg.cn=http://public-cd-a5.disalg.cn:2380 1>/home/leoyhwei/tmp/etcd.log   completed!
+[2022-03-21 20:07:43,057] [INFO] [ssh.py:exec_command:43] ps -ef|grep etcd|grep -v grep|awk '{print $2}'|xargs sudo kill -9  completed!
+[2022-03-21 20:07:43,227] [INFO] [ssh.py:exec_sudo_command:60] rm -rf /home/leoyhwei/*  completed!
+[2022-03-21 20:07:43,448] [INFO] [ssh.py:exec_sudo_command:60] /home/leoyhwei/tmp/etcd/etcd --log-output stdout --name public-cd-a4.disalg.cn --listen-peer-urls http://0.0.0.0:2380 --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://public-cd-a4.disalg.cn:2379 --initial-cluster-state new --initial-advertise-peer-urls http://public-cd-a4.disalg.cn:2380 --initial-cluster 42.192.52.249=http://42.192.52.249:2380,119.3.69.98=http://119.3.69.98:2380,public-cd-a3.disalg.cn=http://public-cd-a3.disalg.cn:2380,public-cd-a4.disalg.cn=http://public-cd-a4.disalg.cn:2380,public-cd-a5.disalg.cn=http://public-cd-a5.disalg.cn:2380 1>/home/leoyhwei/tmp/etcd.log   completed!
+[2022-03-21 20:07:43,450] [INFO] [ssh.py:exec_command:43] ps -ef|grep etcd|grep -v grep|awk '{print $2}'|xargs sudo kill -9  completed!
+[2022-03-21 20:07:43,630] [INFO] [ssh.py:exec_sudo_command:60] rm -rf /home/leoyhwei/*  completed!
+[2022-03-21 20:07:43,830] [INFO] [ssh.py:exec_sudo_command:60] /home/leoyhwei/tmp/etcd/etcd --log-output stdout --name public-cd-a5.disalg.cn --listen-peer-urls http://0.0.0.0:2380 --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://public-cd-a5.disalg.cn:2379 --initial-cluster-state new --initial-advertise-peer-urls http://public-cd-a5.disalg.cn:2380 --initial-cluster 42.192.52.249=http://42.192.52.249:2380,119.3.69.98=http://119.3.69.98:2380,public-cd-a3.disalg.cn=http://public-cd-a3.disalg.cn:2380,public-cd-a4.disalg.cn=http://public-cd-a4.disalg.cn:2380,public-cd-a5.disalg.cn=http://public-cd-a5.disalg.cn:2380 1>/home/leoyhwei/tmp/etcd.log   completed!
+[2022-03-21 20:07:43,831] [INFO] [ssh.py:exec_command:43] ps -ef|grep etcd|grep -v grep|awk '{print $2}'|xargs sudo kill -9  completed!
+[2022-03-21 20:07:43,998] [INFO] [ssh.py:exec_sudo_command:60] rm -rf /home/leoyhwei/*  completed!

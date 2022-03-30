@@ -29,5 +29,7 @@ class pause_nemesis:
         hostname = self.paused_client.hostname
         logging.info("start recover the db on client {}".format(hostname))
         self.paused_client.recover()
+        self.clients.append(self.paused_client)
+        self.paused_client = None
         logging.info("recoverd the db on client {}".format(hostname))
         pass
