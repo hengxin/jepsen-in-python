@@ -5,7 +5,7 @@
 # @File    : interpreter.py
 
 """
-负责翻译generator的操作，处理worker线程，生成与clients和nemeses交互的线程，并记录历史。
+负责翻译generator产生的op，处理worker线程，生成与clients和nemeses交互的线程，并记录历史。
 """
 from functools import partial
 import time
@@ -29,7 +29,6 @@ Measured in microseconds.
 MAX_PENDING_INTERVAL = 1
 
 
-# Interface
 class Worker:
     def open(self, test: dict, id):
         """
@@ -125,21 +124,25 @@ class ClientNemesisWorker(Worker):
         return
 
 
+def client_nemesis_worker():
+    return ClientNemesisWorker()
+
+
 def spawn_worker(test, out: queue, worker, id) -> dict:
     """
     :param test:
-    :param out: 接收已完成操作的队列
+    :param out: 接收已完成op的队列
     :param worker: worker对象
     :param id: worker的id
     :return: dict
     """
 
     _in = queue.Queue(maxsize=1)  # 阻塞队列
+    old_name = threading.current_thread().name
 
+    # 扔进线程池里选一个线程运行
     def evaluate(_worker, _in: queue, _out: queue):
-        old_name = threading.current_thread().name
-        t_name = "jepsen worker " + str(id)
-        threading.current_thread().name = t_name
+        threading.current_thread().name = "jepsen worker " + str(id)
         _worker = _worker.open(test, id)
         exit_flag = False
         while True:
@@ -182,7 +185,7 @@ def spawn_worker(test, out: queue, worker, id) -> dict:
                 threading.current_thread().name = old_name
 
     # 目前使用concurrent.futures模块新建线程去evaluate，效果待验证
-    executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)
+    executor = concurrent.futures.ThreadPoolExecutor()
     future = executor.submit(evaluate, worker, _in, out)
 
     return {
@@ -194,8 +197,6 @@ def spawn_worker(test, out: queue, worker, id) -> dict:
 
 def goes_in_history(op) -> bool:
     """
-    Should this operation be journaled to the history? We exclude :log and
-    :sleep ops right now.
     :param op:
     :return: True or False
     """
@@ -215,7 +216,7 @@ def run(test):
     worker_ids = gen.get_all_threads(ctx)
     completions = queue.Queue(maxsize=len(worker_ids))
     workers = list(map(
-        partial(spawn_worker, test, completions),
+        partial(spawn_worker, test, completions, client_nemesis_worker()),
         worker_ids))
     invocations = {}
     for worker in workers:
@@ -225,9 +226,9 @@ def run(test):
     )
 
     try:
-        outstanding_0 = 0  # 未完成的操作数
-        poll_timeout_0 = 0.0  # 单位：秒
-        history_0 = []  #
+        outstanding_0 = 0  # 未完成的op数
+        poll_timeout_0 = 0.0
+        history_0 = []
 
         def _run_recursive(ctx, gene, outstanding, poll_timeout, history):
             try:
@@ -264,7 +265,7 @@ def run(test):
 
                 if op is None:
                     if outstanding > 0:
-                        # 没有下一个操作，但仍有未完成的操作
+                        # 没有下一个op，但仍有未完成的op
                         # 等待worker
                         _run_recursive(ctx, gene, outstanding,
                                        MAX_PENDING_INTERVAL, history)
@@ -285,8 +286,8 @@ def run(test):
                     _run_recursive(ctx, gene, outstanding,
                                    MAX_PENDING_INTERVAL, history)
 
-                else:  # 得到一个操作调用
-                    # 时间未到，还不能求值
+                else:  # 得到一个op
+                    # 时间未到，还不能处理
                     if time_taken < op['time']:
                         _run_recursive(ctx, gene, outstanding,
                                        op['time'] - time_taken, history)
