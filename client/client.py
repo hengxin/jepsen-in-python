@@ -5,9 +5,10 @@
 # @File    : clients.py
 import logging
 import random
-
+import time
 from util.ssh import ssh_client
 from db.database import database_op
+from threading import Thread
 
 
 class client:
@@ -27,6 +28,12 @@ class client:
 
     def shutdown_db(self):
         self.database.shutdown()
+
+    def recover(self):
+        t = Thread(target=self.setup_db())
+        t.start()
+        time.sleep(20)
+        self.connect_db()
 
     def connect_db(self):
         self.database_connection = self.database.connect_database()
