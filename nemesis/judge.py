@@ -165,7 +165,6 @@ def minority_third(clients):
     third = math.floor(len(clients) / 3)
     shuffled_clients = shuffle(clients)
     return complete_grudge([shuffled_clients[0:third], shuffled_clients[third:]])
-    pass
 
 
 # primaries:所有节点与其他分别分割 结果为{1:{2,3,4,5},
@@ -182,8 +181,4 @@ def primaries(clients):
 
 
 if __name__ == "__main__":
-    # print(majority([1, 2, 3, 4, 5]))
-    # print(one([1, 2, 3, 4, 5]))
-    # print(minority_third([1, 2, 3, 4, 5]))
-    # print(primaries([1, 2, 3, 4, 5]))
-    print(majorities_ring([1, 2, 3, 4, 5]))
+    raise Exception("aaaa")

@@ -4,18 +4,18 @@
 # @Email   : 2764065464@qq.com
 # @File    : pyjepsen.py
 import logging
+
+from checker.checker import checker
 from util import util
 from client.client import client
 from logger.log_util import log
 from threading import Thread
-from nemesis import nemesis
+from nemesis.nemesis import nemesis
 from nemesis.judge import *
 import time
 import os
 import random
-from fastcore.transform import Pipeline
-from functools import partial
-from generator import generator as gen, interpreter as gen_inter
+
 
 
 def operation(database_connection, history):
@@ -86,8 +86,13 @@ def cas():
 
 
 if __name__ == '__main__':
-    server_config = util.read_config("server.yaml")
-    database_config = util.read_config("database.yaml")
+    jepsen_config = util.read_config("config.yaml")
+    server_config = jepsen_config["server_config"]
+    database_config = jepsen_config["database_config"]
+    nemesis_config = jepsen_config["nemesis_config"]
+    checker_config = jepsen_config["checker_config"]
+
+
     logger = log({})
     # 创建日志对象 用于写文件
     # 可传入日志的相关配置
@@ -101,21 +106,22 @@ if __name__ == '__main__':
         t = Thread(target=client.setup_db())
         t.start()
     time.sleep(20)
+    jepsen_nemesis = nemesis(client_list, nemesis_config)
+    jepsen_checker = checker(logger.history_file, checker_config)
     try:
         for client in client_list:
             client.connect_db()
         # 把list交给generator去操作
         method_list = [write, read, cas]
         client_list[0].operate(method_list[0])
-        partition_nemesis = nemesis.nemesis_partition(client_list, majorities_ring_stochastic)
         for i in range(30):
             client_list[random.randint(0, len(client_list) - 1)].operate(
                 method_list[random.randint(0, len(method_list) - 1)])
-        partition_nemesis.start()
+        jepsen_nemesis.start()
         for i in range(30):
             client_list[random.randint(0, len(client_list) - 1)].operate(
                 method_list[random.randint(0, len(method_list) - 1)])
-        partition_nemesis.stop()
+        jepsen_nemesis.stop()
         for i in range(30):
             client_list[random.randint(0, len(client_list) - 1)].operate(
                 method_list[random.randint(0, len(method_list) - 1)])
@@ -126,7 +132,5 @@ if __name__ == '__main__':
     for client in client_list:
         client.shutdown_db()
     # knossos打了个包 先这样用着
-    result = os.popen(
-        "java -jar knossos-0.3.9-SNAPSHOT-standalone.jar --model cas-register {}".format(logger.history_file))
-    for i in result.readlines():
-        print(i)
+    jepsen_checker.check()
+

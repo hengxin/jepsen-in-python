@@ -1,0 +1,28 @@
+database_config:
+  initial_cluster: "42.192.52.249=http://42.192.52.249:2380,119.3.69.98=http://119.3.69.98:2380,public-cd-a3.disalg.cn=http://public-cd-a3.disalg.cn:2380,public-cd-a4.disalg.cn=http://public-cd-a4.disalg.cn:2380,public-cd-a5.disalg.cn=http://public-cd-a5.disalg.cn:2380"
+  #initial_cluster: "42.192.52.249=http://42.192.52.249:2380,119.3.69.98=http://119.3.69.98:2380"
+  port: 2379
+
+server_config:
+
+
+nemesis_config:
+  # mode -- partition, clock, pause, kill, None
+  mode: "partition"
+  # when mode is partition, partition_method should be set
+  # partition_method:
+  #   one: randomly select one of the nodes
+  #   majority: select the first floor half of the nodes
+  #   majorities_ring: select some groups by a great algorithm
+  #   minority-third: select the first one-third floor of the nodes
+  #   primaries: separate all nodes with each other
+  partition_method: "majorities_ring"
+  # when mode is clock. step should be set
+  # It`s the time of the step the clock will be changed and the unit is seconds
+  #step: 60
+
+checker_config:
+  # models -- cas-register, mutex, register
+  models: "cas-register"
+  # algos -- competition, wgl, linear
+  algos: "competition"

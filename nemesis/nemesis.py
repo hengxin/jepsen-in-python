@@ -5,55 +5,56 @@
 # @File    : nemesis.py
 import logging
 from nemesis.mode.partition_nemesis import partition_nemesis
+from nemesis.mode.clock_nemesis import clock_nemesis
+from nemesis.mode.kill_nemesis import kill_nemesis
+from nemesis.mode.pause_nemesis import pause_nemesis
+from nemesis.judge import majority, majorities_ring, one, primaries, minority_third
 
 
 def nemesis_partition(clients, partition_method):
     return partition_nemesis(clients, partition_method=partition_method)
 
 
-def nemesis_clock(clients):
-    return nemesis(clients, "clock")
+def nemesis_clock(clients, step=60):
+    return clock_nemesis(clients, step)
+
+
+def nemesis_kill(clients):
+    return kill_nemesis(clients)
+
+
+def nemesis_pause(clients):
+    return pause_nemesis(clients)
 
 
 class nemesis:
-    def __init__(self, clients, mode, partition_method=None):
-        self.mode = mode
-        self.clients = clients
-        self.partition_method = partition_method
+    def __init__(self, clients, nemesis_config):
+        mode = nemesis_config["mode"]
+        if mode == "partition":
+            if "partition_method" in nemesis_config:
+                self.n = nemesis_partition(clients, eval(nemesis_config["partition_method"]))
+            else:
+                logging.error("Please select a partition_method for nemesis!")
+                raise Exception("Config Error")
+        elif mode == "clock":
+            if "step" in nemesis_config:
+                self.n = nemesis_clock(clients, nemesis_config["step"])
+            else:
+                self.n = nemesis_clock(clients)
+        elif mode == "kill":
+            self.n = nemesis_kill(clients)
+        elif mode == "pause":
+            self.n = nemesis_pause(clients)
+        else:
+            self.n = None
 
     def start(self):
-        if self.mode == "partition":
-            client_list = []
-            for i in range(0, len(self.clients)):
-                client_list.append(i + 1)
-            net_operation_group = self.partition_method(client_list)
-            logging.info("start partition nemesis with judge function {}".format(self.partition_method.__name__))
-
-            for key in net_operation_group.keys():
-                target_group = []
-                for i in net_operation_group[key]:
-                    target_group.append(self.clients[i - 1].hostname)
-                self.clients[key - 1].ssh_client.drop_all_net(target_group)
-                logging.info("isolated [{}] and [{}]".format(self.clients[key - 1].hostname, ",".join(target_group)))
+        if self.n:
+            self.n.start()
+        pass
 
     def stop(self):
-        if self.mode == "partition":
-            for client in self.clients:
-                client.ssh_client.heal_net()
-                logging.info("healed netowrk of {}".format(client.hostname))
+        if self.n:
+            self.n.stop()
+        pass
 
-# if __name__ == "__main__":
-#
-#     server_config = util.read_config("../server.yaml")
-#     database_config = util.read_config("../database.yaml")
-#     # 创建日志对象 用于写文件
-#     # 可传入日志的相关配置
-#     client_l = []
-#     index = 0
-#     for node in server_config:
-#         new_client = client(server_config[node], None, database_config, None, index)
-#         index += 1
-#         client_l.append(new_client)
-#     n_nemesis = partition_nemesis(client_l, partition_method=majorities_ring)
-#     n_nemesis.start()
-#     n_nemesis.stop()
