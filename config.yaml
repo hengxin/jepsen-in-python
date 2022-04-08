@@ -1,9 +1,9 @@
-database_config:
+database:
   initial_cluster: "42.192.52.249=http://42.192.52.249:2380,119.3.69.98=http://119.3.69.98:2380,public-cd-a3.disalg.cn=http://public-cd-a3.disalg.cn:2380,public-cd-a4.disalg.cn=http://public-cd-a4.disalg.cn:2380,public-cd-a5.disalg.cn=http://public-cd-a5.disalg.cn:2380"
   #initial_cluster: "42.192.52.249=http://42.192.52.249:2380,119.3.69.98=http://119.3.69.98:2380"
   port: 2379
 
-server_config:
+server:
   client1:
     hostname: "119.3.69.98"
     port: 22
@@ -11,7 +11,7 @@ server_config:
     password: ""
 
 
-nemesis_config:
+nemesis:
   # mode -- partition, clock, pause, kill, None
   mode: "partition"
   # when mode is partition, partition_method should be set
@@ -26,7 +26,7 @@ nemesis_config:
   # It`s the time of the step the clock will be changed and the unit is seconds
   #step: 60
 
-checker_config:
+checker:
   # models -- cas-register, mutex, register
   models: "cas-register"
   # algos -- competition, wgl, linear

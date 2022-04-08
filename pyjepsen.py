@@ -87,10 +87,10 @@ def cas():
 
 if __name__ == '__main__':
     jepsen_config = util.read_config("config.yaml")
-    server_config = jepsen_config["server_config"]
-    database_config = jepsen_config["database_config"]
-    nemesis_config = jepsen_config["nemesis_config"]
-    checker_config = jepsen_config["checker_config"]
+    server_config = jepsen_config["server"]
+    database_config = jepsen_config["database"]
+    nemesis_config = jepsen_config["nemesis"]
+    checker_config = jepsen_config["checker"]
 
 
     logger = log({})
