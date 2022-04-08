@@ -12,15 +12,14 @@ from threading import Thread
 
 
 class client:
-    def __init__(self, node, logger, database_config, operation, index):
+    def __init__(self, node, database_config, operation):
         self.hostname = node["hostname"]
         self.port = node["port"]
         self.username = node["username"]
         self.passwd = node["password"]
-        self.logger = logger
         self.operation = operation
         self.ssh_client = ssh_client(self.hostname, self.port, self.username, self.passwd)
-        self.database = database_op(self.ssh_client, self.hostname, logger, database_config)
+        self.database = database_op(self.ssh_client, self.hostname, database_config)
         self.database_connection = None
 
     def setup_db(self):
@@ -45,14 +44,10 @@ class client:
         else:
             pass
 
-    def operate(self, history):
-        # self.index = random.randint(0,10000)
-        # history = f()
-        self.logger.write_history(history["index"], history["type"], history["f"], history["value"])
+    def operate(self, op):
         logging.info(self.hostname)
-        logging.info(history)
-        history_b = self.operation(self.database_connection, history)
-        self.logger.write_history(history["index"], history_b["type"], history_b["f"], history_b["value"])
+        logging.info(op)
+        exec_op_response = self.operation(self.database_connection, op)
         logging.info(self.hostname)
-        logging.info(history_b)
+        logging.info(exec_op_response)
 

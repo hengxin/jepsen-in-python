@@ -18,6 +18,7 @@ import generator.generator as gen
 import client.client as cli
 import util.util as util
 import nemesis.nemesis as nemesis
+from pyjepsen import jepsen_clients, jepsen_nemesis
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -30,52 +31,38 @@ MAX_PENDING_INTERVAL = 1
 
 
 class Worker:
-    def open(self, test: dict, id):
-        """
-        :param test:
-        :param id:
-        :return:
-        """
+    def open(self, id):
         raise Exception('subclass must implement this method')
 
-    def invoke(self, test: dict, op: dict):
-        """
-        :param test:
-        :param op:
-        :return:
-        """
+    def invoke(self, op: dict):
         raise Exception('subclass must implement this method')
 
-    def close(self, test: dict):
-        """
-        :param test:
-        :return:
-        """
+    def close(self):
         raise Exception('subclass must implement this method')
 
 
 class ClientWorker(Worker):
-    def __init__(self, node, process, client):
-        self.node = node
+    def __init__(self, process, client):
         self.process = process
         self.client = client
+        self.id = None
 
-    def open(self, test, id):
+    def open(self, id):
+        self.client = jepsen_clients[id]
+        self.id = id
+        self.client.connect_db()
         return self
 
-    def invoke(self, test, op):
-        if self.process != op['process'] \
-                and not cli.is_reusable(self.client, test):
-            # 新process，关闭当前ClientWorker并创建新的
-            self.close(test)
+    def invoke(self, op):
+        if self.process != op['process']:
+            # 说明thread发生崩溃，分配了新的process
+            # 关闭当前ClientWorker并创建新的
+            self.close()
 
             # 尝试打开新的client
             try:
-                self.client = cli.open(
-                    cli.validate(test['client']),
-                    test,
-                    self.node,
-                )
+                self.client = jepsen_clients[self.id]
+                self.client.connect_db()
                 self.process = op['process']
             except Exception as e:
                 logging.warning(repr(e) + " >> Error opening client.")
@@ -87,40 +74,42 @@ class ClientWorker(Worker):
                 })
                 return op_fail
 
-            # 使用新的client再次invoke
-            self.invoke(test, op)
+            # 使用新的client去执行op
+            self.invoke(op)
         else:
-            self.client.invoke(test, op)
+            self.client.operate(op)
 
-    def close(self, test):
+    def close(self):
         if self.client:
-            cli.close(self.client, test)
+            self.client.disconnect_db()
             self.client = None
 
 
 class NemesisWorker(Worker):
-    def open(self, test, id):
+    def __init__(self):
+        self.nemesis = jepsen_nemesis
+
+    def open(self, id):
         return self
 
-    def invoke(self, test, op):
-        return nemesis.invoke(test['nemesis'], test, op)
+    def invoke(self, op):
+        return self.nemesis.start()
 
-    def close(self, test):
+    def close(self):
         return
 
 
 class ClientNemesisWorker(Worker):
-    def open(self, test, id):
+    def open(self, id):
         if isinstance(id, int):
-            nodes = test['nodes']
-            return ClientWorker(nodes[id % len(nodes)], None, None)
+            return ClientWorker(None, None)
         else:
             return NemesisWorker()
 
-    def invoke(self, test, op):
+    def invoke(self, op):
         return
 
-    def close(self, test):
+    def close(self):
         return
 
 
@@ -145,44 +134,44 @@ def spawn_worker(test, out: queue, worker, id) -> dict:
         threading.current_thread().name = "jepsen worker " + str(id)
         _worker = _worker.open(test, id)
         exit_flag = False
-        while True:
-            if exit_flag:
-                break
-            op = _in.get()  # 阻塞获取元素
-            try:
-                match op['type']:
-                    case 'exit':
-                        exit_flag = True
-                    case 'sleep':
-                        time.sleep(op['value'])
-                        _out.put(op)
-                        exit_flag = False
-                    case 'log':
-                        logging.info(op['value'])
-                        _out.put(op)
-                        exit_flag = False
-                    case _:
-                        logging.info(str(op))
-                        _out.put(op)
+        try:
+            while True:
+                if exit_flag:
+                    break
+                op = _in.get()  # 阻塞获取元素
+                try:
+                    match op['type']:
+                        case 'exit':
+                            exit_flag = True
+                        case 'sleep':
+                            time.sleep(op['value'])
+                            _out.put(op)
+                            exit_flag = False
+                        case 'log':
+                            logging.info(op['value'])
+                            _out.put(op)
+                            exit_flag = False
+                        case _:  # invoke
+                            result = _worker.invoke(test, op)
+                            _out.put(result)
+                            logging.info(str(result))
+                            exit_flag = False
 
-                        op2 = _worker.invoke(test, op)
-                        _out.put(op2)
-                        logging.info(str(op2))
-                        exit_flag = False
+                except Exception as e:
+                    logging.warning(repr(e) + " >> Process {} crashed.".format(op['process']))
+                    # 出错，更改op类型为info
+                    op_info = op.copy()
+                    op_info.update({
+                        "type": "info",
+                        "exception": repr(e),
+                        "error": traceback.format_exc()
+                    })
+                    _out.put(op_info)
+                    exit_flag = True
 
-            except Exception as e:
-                logging.warning(repr(e) + " >> Process {} crashed.".format(op['process']))
-                # 将该op转换为info级别
-                op_info = op.copy()
-                op_info.update({
-                    "type": "info",
-                    "exception": repr(e),
-                    "error": traceback.format_exc()
-                })
-
-            finally:
-                _worker.close(test)
-                threading.current_thread().name = old_name
+        finally:
+            _worker.close(test)
+            threading.current_thread().name = old_name
 
     # 目前使用concurrent.futures模块新建线程去evaluate，效果待验证
     executor = concurrent.futures.ThreadPoolExecutor()
@@ -209,7 +198,7 @@ def goes_in_history(op) -> bool:
 def run(test):
     """
     :param test:
-    :return:
+    :return: history
     """
     # gen.init()
     ctx = gen.build_context(test)
@@ -238,7 +227,7 @@ def run(test):
                 pass  # 忽略queue内置的超时抛的Empty异常
 
             if cur_op:
-                print(cur_op['completed'])
+                # print(cur_op['completed'])
                 cur_thread = gen.process2thread(ctx, cur_op['process'])
                 time_taken = util.compute_relative_time()
                 cur_op.update({"time": time_taken})  # 更新时间戳
@@ -305,7 +294,7 @@ def run(test):
 
                         _run_recursive(ctx, gene2, outstanding + 1, 0, history)
 
-        _run_recursive(ctx, gene, outstanding_0, poll_timeout_0, history_0)
+        return _run_recursive(ctx, gene, outstanding_0, poll_timeout_0, history_0)
 
     except Exception as e:
         logging.info("Shutting down workers after abnormal exit")
