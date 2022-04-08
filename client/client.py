@@ -38,6 +38,13 @@ class client:
     def connect_db(self):
         self.database_connection = self.database.connect_database()
 
+    def disconnect_db(self):
+        if self.database_connection:
+            self.database_connection.close()
+            self.database_connection = None
+        else:
+            pass
+
     def operate(self, f):
         self.index = random.randint(0,10000)
         history = f()
