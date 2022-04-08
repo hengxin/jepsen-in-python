@@ -45,14 +45,12 @@ class client:
         else:
             pass
 
-    def operate(self, f):
-        self.index = random.randint(0,10000)
-        history = f()
-        self.logger.write_history(self.index, history["type"], history["f"], history["value"])
+    def operate(self, history):
+        self.logger.write_history(history["index"], history["type"], history["f"], history["value"])
         logging.info(self.hostname)
         logging.info(history)
         history_b = self.operation(self.database_connection, history)
-        self.logger.write_history(self.index, history_b["type"], history_b["f"], history_b["value"])
+        self.logger.write_history(history["index"], history_b["type"], history_b["f"], history_b["value"])
         logging.info(self.hostname)
         logging.info(history_b)
 
