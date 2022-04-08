@@ -46,6 +46,8 @@ class client:
             pass
 
     def operate(self, history):
+        # self.index = random.randint(0,10000)
+        # history = f()
         self.logger.write_history(history["index"], history["type"], history["f"], history["value"])
         logging.info(self.hostname)
         logging.info(history)
