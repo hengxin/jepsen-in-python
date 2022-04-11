@@ -220,7 +220,7 @@ class FriendlyExceptions(Generator):
             errmsg = "Generator threw {} when asked for an operation\n" \
                      "Generator:{:>10d}\n" \
                      "Context:{}\n" \
-                .format(repr(e), self.gen, pprint.pformat(context, indent=2))
+                .format(repr(e), self.gen if self.gen else "None", pprint.pformat(context, indent=2).replace('\'', ''))
             raise Exception(errmsg)
 
     def update(self, _, test, context, event):
@@ -631,7 +631,7 @@ class Any(Generator):
                 return None
 
         soonest = reduce(soonest_op_dict,
-                         map_builtin(convert2dict, enumerate(gens)),
+                         list(map_builtin(convert2dict, range(0, len(gens)), gens)),
                          initial=None)
         if soonest:
             gens[soonest["i"]] = soonest["gen2"]
@@ -687,11 +687,11 @@ class Mix(Generator):
             if res := op(gen, test, context):
                 op_var, gen2 = res[0], res[1]
                 gens.insert(i, gen2)
-                return [op_var, Mix(random.randint(0, len(gens)), gens)]
+                return [op_var, Mix(random.randint(0, len(gens)-1), gens)]
             else:
                 del gens[i]
                 return op(
-                    Mix(random.randint(0, len(gens)), gens),
+                    Mix(random.randint(0, len(gens)-1), gens),
                     test, context
                 )
         else:
@@ -702,7 +702,7 @@ class Mix(Generator):
 
 
 def mix(gens):
-    return Mix(random.randint(0, len(gens)), gens)
+    return Mix(random.randint(0, len(gens)-1), gens)
 
 
 class Limit(Generator):

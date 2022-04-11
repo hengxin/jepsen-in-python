@@ -76,6 +76,8 @@ def read():
         "value": None
     }
 
+    # compare and set
+
 
 def cas():
     return {
@@ -91,7 +93,7 @@ if __name__ == '__main__':
     database_config = jepsen_config["database"]
     nemesis_config = jepsen_config["nemesis"]
     checker_config = jepsen_config["checker"]
-
+    logger = log({})  # 可传入日志的相关配置
     # 1. 根据自己实际测试需要配置组装generator
     jepsen_config["generator"] = Pipeline([
         gen.mix,
@@ -121,7 +123,7 @@ if __name__ == '__main__':
     )
 
     # 5.1 运行时dict日志转换为knossos可识别的clojure的Map格式日志文件
-    logger = log({})  # 可传入日志的相关配置
+
     for op_result in op_exec_history:
         logger.write_history(op_result['process'], op_result['type'], op_result['f'], op_result['value'])
 
