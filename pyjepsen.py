@@ -76,8 +76,6 @@ def read():
         "value": None
     }
 
-    # compare and set
-
 
 def cas():
     return {
@@ -117,13 +115,12 @@ if __name__ == '__main__':
     # 4. 创建nemesis
     jepsen_nemesis = nemesis(jepsen_clients, nemesis_config)
 
-    # 5. 运行generator，获得op结果日志（dict格式）
+    # 5.1 运行generator，获得op结果日志（dict格式）
     op_exec_history = util.with_relative_time(
         gen_inter.run, jepsen_config
     )
 
-    # 5.1 运行时dict日志转换为knossos可识别的clojure的Map格式日志文件
-
+    # 5.2 运行时dict日志转换为knossos可识别的clojure的Map格式日志文件
     for op_result in op_exec_history:
         logger.write_history(op_result['process'], op_result['type'], op_result['f'], op_result['value'])
 

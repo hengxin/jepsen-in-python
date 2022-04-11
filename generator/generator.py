@@ -921,7 +921,7 @@ class Stagger(Generator):
 
 
 def stagger(dt, gen):
-    """ 以 *大约* dt为间隔扔出op，该延迟应用于所有operations，而不是单独每个线程"""
+    """ 以 *大约* dt为间隔扔出op，该延迟应用于所有operations，而不是单独每个线程 """
     return Stagger(float(dt * 2), None, gen)
 
 

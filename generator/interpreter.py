@@ -5,7 +5,7 @@
 # @File    : interpreter.py
 
 """
-负责翻译generator产生的op，处理worker线程，生成与clients和nemeses交互的线程，并记录历史。
+负责获取generator产生的op并交予clients/nemesis执行，管理worker生命周期，并记录历史。
 """
 from functools import partial
 import time
@@ -23,9 +23,9 @@ from pyjepsen import jepsen_clients, jepsen_nemesis
 """
 When the generator is :pending, this controls the maximum interval before
 we'll update the context and check the generator for an operation again.
-Measured in microseconds.
+Measured in seconds.
 """
-MAX_PENDING_INTERVAL = 1
+MAX_PENDING_INTERVAL = 1.0
 
 
 class Worker(ABC):
