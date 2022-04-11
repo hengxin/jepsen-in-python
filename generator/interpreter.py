@@ -18,9 +18,9 @@ import generator.generator as gen
 import client.client as cli
 import util.util as util
 import nemesis.nemesis as nemesis
-from pyjepsen import jepsen_clients, jepsen_nemesis
+#from pyjepsen import jepsen_clients, jepsen_nemesis
 
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
 """
 When the generator is :pending, this controls the maximum interval before
@@ -293,8 +293,7 @@ def run(test):
                             history.append(cur_op)
 
                         _run_recursive(ctx, gene2, outstanding + 1, 0, history)
-
-        return _run_recursive(ctx, gene, outstanding_0, poll_timeout_0, history_0)
+        return util.with_relative_time(_run_recursive, ctx, gene, outstanding_0, poll_timeout_0, history_0)
 
     except Exception as e:
         logging.info("Shutting down workers after abnormal exit")
