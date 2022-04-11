@@ -15,13 +15,10 @@ import traceback
 import concurrent.futures
 import queue
 import generator.generator as gen
-import client.client as cli
 import util.util as util
-import nemesis.nemesis as nemesis
-
+from abc import ABC, abstractmethod
 from pyjepsen import jepsen_clients, jepsen_nemesis
 
-# logging.basicConfig(level=logging.DEBUG)
 
 """
 When the generator is :pending, this controls the maximum interval before
@@ -31,15 +28,18 @@ Measured in microseconds.
 MAX_PENDING_INTERVAL = 1
 
 
-class Worker:
+class Worker(ABC):
+    @abstractmethod
     def open(self, id):
-        raise Exception('subclass must implement this method')
+        """ please implement in subclass """
 
+    @abstractmethod
     def invoke(self, op: dict):
-        raise Exception('subclass must implement this method')
+        """ please implement in subclass """
 
+    @abstractmethod
     def close(self):
-        raise Exception('subclass must implement this method')
+        """ please implement in subclass """
 
 
 class ClientWorker(Worker):

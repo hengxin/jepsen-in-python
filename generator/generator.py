@@ -10,6 +10,7 @@ import copy
 from functools import reduce
 from inspect import isfunction
 from builtins import map as map_builtin, filter as filter_builtin, any as any_builtin
+from abc import ABC, abstractmethod
 
 
 def update(gen, test, context, event):
@@ -55,7 +56,8 @@ def op(gen, test, context):
         return gen.op(gen, test, context)
 
 
-class Generator:
+class Generator(metaclass=ABC):
+    @abstractmethod
     def update(self, gen, test, context, event):
         """
         :param gen:
@@ -65,6 +67,7 @@ class Generator:
         :return: gen2
         """
 
+    @abstractmethod
     def op(self, gen, test, context):
         """
         :param gen:
