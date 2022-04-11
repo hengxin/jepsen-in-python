@@ -189,6 +189,8 @@ def goes_in_history(op) -> bool:
     :param op:
     :return: True or False
     """
+    if not op:
+        return False
     if op['type'] == 'sleep' or op['type'] == 'log':
         return False
     else:
@@ -227,7 +229,7 @@ def run(test):
                 pass  # 忽略queue内置的超时抛的Empty异常
 
             if cur_op:
-                # print(cur_op['completed'])
+                print(cur_op)
                 cur_thread = gen.process2thread(ctx, cur_op['process'])
                 time_taken = util.compute_relative_time()
                 cur_op.update({"time": time_taken})  # 更新时间戳
@@ -245,55 +247,58 @@ def run(test):
                 if goes_in_history(cur_op):
                     history.append(cur_op)
                 # 记录历史并继续
-                _run_recursive(ctx, gene, outstanding - 1, 0, history)
+                return _run_recursive(ctx, gene, outstanding - 1, 0, history)
 
             else:
                 time_taken = util.compute_relative_time()
                 ctx.update({"time": time_taken})
-                op, gene2 = gen.op(gene, test, ctx)
+                if res := gen.op(gene, test, ctx):
+                    op, gene2 = res[0], res[1]
 
-                if op is None:
-                    if outstanding > 0:
-                        # 没有下一个op，但仍有未完成的op
-                        # 等待worker
-                        _run_recursive(ctx, gene, outstanding,
+                    if op is None:
+                        if outstanding > 0:
+                            # 没有下一个op，但仍有未完成的op
+                            # 等待worker
+                            _run_recursive(ctx, gene, outstanding,
+                                           MAX_PENDING_INTERVAL, history)
+                        else:
+                            # 完成，告知worker退出
+                            for thread, in_queue in invocations.items():
+                                in_queue.put({"type": "exit"})
+
+                            # 阻塞获取future结果
+                            for worker in workers:
+                                fut = worker['future']
+                                res = fut.result()
+                                msg = "{}result:{!r}"
+                                logging.debug(msg.format(fut, res))
+                            return history
+
+                    elif op == 'pending':
+                        return _run_recursive(ctx, gene, outstanding,
                                        MAX_PENDING_INTERVAL, history)
-                    else:
-                        # 完成，告知worker退出
-                        for thread, in_queue in invocations.items():
-                            in_queue.put({"type": "exit"})
 
-                        # 阻塞获取future结果
-                        for worker in workers:
-                            fut = worker['future']
-                            res = fut.result()
-                            msg = "{}result:{!r}"
-                            logging.debug(msg.format(fut, res))
-                        return history
+                    else:  # 得到一个op
+                        # 时间未到，还不能处理
+                        if time_taken < op['time']:
+                            return _run_recursive(ctx, gene, outstanding,
+                                           op['time'] - time_taken, history)
+                        else:
+                            cur_thread = gen.process2thread(ctx, op['process'])
+                            in_queue = invocations[cur_thread]
+                            in_queue.put(op)
+                            # 更新时间戳及线程占用信息
+                            ctx.update({"time": op['time']})
+                            ctx['free-threads'].remove(cur_thread)
+                            gene2 = gen.update(gene2, test, ctx, op)
 
-                elif op == 'pending':
-                    _run_recursive(ctx, gene, outstanding,
-                                   MAX_PENDING_INTERVAL, history)
+                            if goes_in_history(cur_op):
+                                history.append(cur_op)
 
-                else:  # 得到一个op
-                    # 时间未到，还不能处理
-                    if time_taken < op['time']:
-                        _run_recursive(ctx, gene, outstanding,
-                                       op['time'] - time_taken, history)
-                    else:
-                        cur_thread = gen.process2thread(ctx, op['process'])
-                        in_queue = invocations[cur_thread]
-                        in_queue.put(op)
-                        # 更新时间戳及线程占用信息
-                        ctx.update({"time": op['time']})
-                        ctx['free-threads'].remove(cur_thread)
-                        gene2 = gen.update(gene2, test, ctx, op)
-
-                        if goes_in_history(cur_op):
-                            history.append(cur_op)
-
-                        _run_recursive(ctx, gene2, outstanding + 1, 0, history)
-        return util.with_relative_time(_run_recursive, ctx, gene, outstanding_0, poll_timeout_0, history_0)
+                            return _run_recursive(ctx, gene2, outstanding + 1, 0, history)
+                else:
+                    return None
+        return _run_recursive(ctx, gene, outstanding_0, poll_timeout_0, history_0)
 
     except Exception as e:
         logging.info("Shutting down workers after abnormal exit")

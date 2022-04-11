@@ -119,7 +119,7 @@ if __name__ == '__main__':
 
     # 5. 运行generator，获得op结果日志（dict格式）
     op_exec_history = util.with_relative_time(
-        gen_inter.run(jepsen_config)
+        gen_inter.run, jepsen_config
     )
 
     # 5.1 运行时dict日志转换为knossos可识别的clojure的Map格式日志文件
