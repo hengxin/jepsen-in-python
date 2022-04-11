@@ -99,7 +99,7 @@ if __name__ == '__main__':
         gen.mix,
         partial(gen.stagger, 1),
         partial(gen.nemesis, None),
-        partial(gen.time_limit, 30)
+        partial(gen.time_limit, 60)
     ])([read, write, cas])
 
     # 2. 创建所测试的分布式数据库节点对应的clients

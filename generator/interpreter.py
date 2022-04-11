@@ -253,13 +253,13 @@ def run(test):
                 time_taken = util.compute_relative_time()
                 ctx.update({"time": time_taken})
                 if res := gen.op(gene, test, ctx):
-                    op, gene2 = res[0], res[1]
+                    cur_op, gene2 = res[0], res[1]
 
-                    if op is None:
+                    if cur_op is None:
                         if outstanding > 0:
                             # 没有下一个op，但仍有未完成的op
                             # 等待worker
-                            _run_recursive(ctx, gene, outstanding,
+                            return _run_recursive(ctx, gene, outstanding,
                                            MAX_PENDING_INTERVAL, history)
                         else:
                             # 完成，告知worker退出
@@ -274,30 +274,30 @@ def run(test):
                                 logging.debug(msg.format(fut, res))
                             return history
 
-                    elif op == 'pending':
+                    elif cur_op == 'pending':
                         return _run_recursive(ctx, gene, outstanding,
                                        MAX_PENDING_INTERVAL, history)
 
                     else:  # 得到一个op
                         # 时间未到，还不能处理
-                        if time_taken < op['time']:
+                        if time_taken < cur_op['time']:
                             return _run_recursive(ctx, gene, outstanding,
-                                           op['time'] - time_taken, history)
+                                           cur_op['time'] - time_taken, history)
                         else:
-                            cur_thread = gen.process2thread(ctx, op['process'])
+                            cur_thread = gen.process2thread(ctx, cur_op['process'])
                             in_queue = invocations[cur_thread]
-                            in_queue.put(op)
+                            in_queue.put(cur_op)
                             # 更新时间戳及线程占用信息
-                            ctx.update({"time": op['time']})
+                            ctx.update({"time": cur_op['time']})
                             ctx['free-threads'].remove(cur_thread)
-                            gene2 = gen.update(gene2, test, ctx, op)
+                            gene2 = gen.update(gene2, test, ctx, cur_op)
 
                             if goes_in_history(cur_op):
                                 history.append(cur_op)
 
                             return _run_recursive(ctx, gene2, outstanding + 1, 0, history)
                 else:
-                    return None
+                    return history
         return _run_recursive(ctx, gene, outstanding_0, poll_timeout_0, history_0)
 
     except Exception as e:
