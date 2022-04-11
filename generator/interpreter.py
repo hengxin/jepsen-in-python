@@ -18,7 +18,8 @@ import generator.generator as gen
 import client.client as cli
 import util.util as util
 import nemesis.nemesis as nemesis
-#from pyjepsen import jepsen_clients, jepsen_nemesis
+
+from pyjepsen import jepsen_clients, jepsen_nemesis
 
 # logging.basicConfig(level=logging.DEBUG)
 
@@ -229,7 +230,7 @@ def run(test):
                 pass  # 忽略queue内置的超时抛的Empty异常
 
             if cur_op:
-                print(cur_op)
+                # print(cur_op)
                 cur_thread = gen.process2thread(ctx, cur_op['process'])
                 time_taken = util.compute_relative_time()
                 cur_op.update({"time": time_taken})  # 更新时间戳
@@ -260,7 +261,7 @@ def run(test):
                             # 没有下一个op，但仍有未完成的op
                             # 等待worker
                             return _run_recursive(ctx, gene, outstanding,
-                                           MAX_PENDING_INTERVAL, history)
+                                                  MAX_PENDING_INTERVAL, history)
                         else:
                             # 完成，告知worker退出
                             for thread, in_queue in invocations.items():
@@ -276,13 +277,13 @@ def run(test):
 
                     elif cur_op == 'pending':
                         return _run_recursive(ctx, gene, outstanding,
-                                       MAX_PENDING_INTERVAL, history)
+                                              MAX_PENDING_INTERVAL, history)
 
                     else:  # 得到一个op
                         # 时间未到，还不能处理
                         if time_taken < cur_op['time']:
                             return _run_recursive(ctx, gene, outstanding,
-                                           cur_op['time'] - time_taken, history)
+                                                  cur_op['time'] - time_taken, history)
                         else:
                             cur_thread = gen.process2thread(ctx, cur_op['process'])
                             in_queue = invocations[cur_thread]
@@ -298,6 +299,7 @@ def run(test):
                             return _run_recursive(ctx, gene2, outstanding + 1, 0, history)
                 else:
                     return history
+
         return _run_recursive(ctx, gene, outstanding_0, poll_timeout_0, history_0)
 
     except Exception as e:

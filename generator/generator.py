@@ -686,10 +686,10 @@ class Mix(Generator):
             gen = None if len(gens) <= i else gens[i]
             if res := op(gen, test, context):
                 op_var, gen2 = res[0], res[1]
-                gens[i] = gen2
+                gens[i] = gen2  # 更新gen状态
                 return [op_var, Mix(random.randint(0, len(gens)-1), gens)]
             else:
-                del gens[i]
+                del gens[i]  # 使命结束，从列表中删除
                 return op(
                     Mix(random.randint(0, len(gens)-1), gens),
                     test, context

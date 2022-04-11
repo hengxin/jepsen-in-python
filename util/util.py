@@ -15,7 +15,7 @@ def read_config(filename):
 def with_relative_time(func, *args, **kwargs):
     global relative_time_origin
     relative_time_origin = time.time()
-    logging.info("Relative time begins now")
+    logging.info("Relative time begins now: {}".format(relative_time_origin))
     return func(*args, **kwargs)
 
 
