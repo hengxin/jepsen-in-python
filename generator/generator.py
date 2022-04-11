@@ -120,7 +120,7 @@ def get_all_threads(context):
 
 
 def process2thread(context, process):
-    return [t for t, p in context['worker'].items() if p == process][0]
+    return [t for t, p in context['workers'].items() if p == process][0]
 
 
 def thread2process(context, thread):
@@ -171,7 +171,7 @@ class Validate(Generator):
                 if op_var == 'pending':
                     pass
                 else:
-                    if isinstance(op_var, dict):
+                    if not isinstance(op_var, dict):
                         problems.append("op value should be 'pending' or a dict")
                     if op_var['type'] not in ['invoke', 'info', 'sleep', 'log']:
                         problems.append("type value should be 'invoke', 'info', 'sleep' or 'log'")
@@ -183,12 +183,12 @@ class Validate(Generator):
                         problems.append("process {} is not free".format(op_var['process']))
 
             if problems:
-                errmsg = "Generator produced an invalid [op, gen\'] list when asked for an operation:{:>10d}" \
+                errmsg = "Generator produced an invalid [op, gen\'] list when asked for an operation:{}" \
                          "\nThe specific issues are as follows:\n" \
                     .format(res)
                 for problem in problems:
                     errmsg += "  -{}".format(problem)
-                errmsg += "Generator:{:>10d}\n" \
+                errmsg += "Generator:{}\n" \
                           "Context:{}\n" \
                     .format(gen, pprint.pformat(context, indent=2))
 
@@ -218,9 +218,9 @@ class FriendlyExceptions(Generator):
                 return [op_var, FriendlyExceptions(gen2)]
         except Exception as e:
             errmsg = "Generator threw {} when asked for an operation\n" \
-                     "Generator:{:>10d}\n" \
+                     "Generator:{}\n" \
                      "Context:{}\n" \
-                .format(repr(e), self.gen if self.gen else "None", pprint.pformat(context, indent=2).replace('\'', ''))
+                .format(repr(e), self.gen.gen if self.gen else "None", pprint.pformat(context, indent=2).replace('\'', ''))
             raise Exception(errmsg)
 
     def update(self, _, test, context, event):
@@ -229,7 +229,7 @@ class FriendlyExceptions(Generator):
                 return FriendlyExceptions(gen2)
         except Exception as e:
             errmsg = "Generator threw {} when updated with an event.\n" \
-                     "Generator:{:>10d}\n" \
+                     "Generator:{}\n" \
                      "Context:{}\n" \
                      "Event:{}\n" \
                 .format(repr(e), self.gen, pprint.pformat(context, indent=2), pprint.pformat(event, indent=2))
@@ -632,11 +632,11 @@ class Any(Generator):
 
         soonest = reduce(soonest_op_dict,
                          list(map_builtin(convert2dict, range(0, len(gens)), gens)),
-                         initial=None)
+                         None)
         if soonest:
             gens[soonest["i"]] = soonest["gen2"]
-            return [soonest["op"],
-                    Any(gens)]
+            return [soonest["op"], Any(gens)]
+
         else:
             return None
 
