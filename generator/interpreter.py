@@ -227,7 +227,10 @@ def run(test):
 
         def _run_recursive(ctx, gene, outstanding, poll_timeout, history):
             try:
-                cur_op = completions.get(timeout=poll_timeout)
+                if poll_timeout != 0:
+                    cur_op = completions.get(timeout=poll_timeout)
+                else:
+                    cur_op = completions.get_nowait()
             except queue.Empty:
                 cur_op = None
                 pass  # 忽略queue内置的超时抛的Empty异常
