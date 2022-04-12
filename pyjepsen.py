@@ -85,6 +85,7 @@ def cas():
     }
 
 
+
 if __name__ == '__main__':
     jepsen_config = util.read_config("config.yaml")
     server_config = jepsen_config["server"]
@@ -99,21 +100,20 @@ if __name__ == '__main__':
         partial(gen.nemesis, None),
         partial(gen.time_limit, 60)
     ])([read, write, cas])
-
+    gen_inter.jepsen_clients = []
     # 2. 创建所测试的分布式数据库节点对应的clients
-    jepsen_clients = []
     for node in server_config:
         new_client = client(server_config[node], database_config, operation)
-        jepsen_clients.append(new_client)
+        gen_inter.jepsen_clients.append(new_client)
 
     # 3. setup数据库
-    for client in jepsen_clients:
+    for client in gen_inter.jepsen_clients:
         t = Thread(target=client.setup_db())
         t.start()
     time.sleep(20)
 
     # 4. 创建nemesis
-    jepsen_nemesis = nemesis(jepsen_clients, nemesis_config)
+    gen_inter.jepsen_nemesis = nemesis(gen_inter.jepsen_clients, nemesis_config)
 
     # 5.1 运行generator，获得op结果日志（dict格式）
     op_exec_history = util.with_relative_time(

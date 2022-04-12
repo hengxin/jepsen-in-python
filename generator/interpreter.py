@@ -17,8 +17,6 @@ import queue
 import generator.generator as gen
 import util.util as util
 from abc import ABC, abstractmethod
-from pyjepsen import jepsen_clients, jepsen_nemesis
-
 
 """
 When the generator is :pending, this controls the maximum interval before
@@ -26,7 +24,9 @@ we'll update the context and check the generator for an operation again.
 Measured in seconds.
 """
 MAX_PENDING_INTERVAL = 1.0
+global jepsen_clients
 
+global jepsen_nemesis
 
 class Worker(ABC):
     @abstractmethod
@@ -43,18 +43,20 @@ class Worker(ABC):
 
 
 class ClientWorker(Worker):
-    def __init__(self, process, client):
+    def __init__(self, process, client, id):
         self.process = process
         self.client = client
-        self.id = None
+        self.id = id
 
     def open(self, id):
+        global jepsen_clients
         self.client = jepsen_clients[id]
         self.id = id
         self.client.connect_db()
         return self
 
     def invoke(self, op):
+        global jepsen_clients
         if self.process != op['process']:
             # 说明thread发生崩溃，分配了新的process
             # 关闭当前ClientWorker并创建新的
@@ -88,6 +90,7 @@ class ClientWorker(Worker):
 
 class NemesisWorker(Worker):
     def __init__(self):
+        global jepsen_nemesis
         self.nemesis = jepsen_nemesis
 
     def open(self, id):
@@ -103,7 +106,7 @@ class NemesisWorker(Worker):
 class ClientNemesisWorker(Worker):
     def open(self, id):
         if isinstance(id, int):
-            return ClientWorker(None, None)
+            return ClientWorker(None, None, id)
         else:
             return NemesisWorker()
 
@@ -133,7 +136,7 @@ def spawn_worker(test, out: queue, worker, id) -> dict:
     # 扔进线程池里选一个线程运行
     def evaluate(_worker, _in: queue, _out: queue):
         threading.current_thread().name = "jepsen worker " + str(id)
-        _worker = _worker.open(test, id)
+        _worker = _worker.open(id)
         exit_flag = False
         try:
             while True:
@@ -153,7 +156,7 @@ def spawn_worker(test, out: queue, worker, id) -> dict:
                             _out.put(op)
                             exit_flag = False
                         case _:  # invoke
-                            result = _worker.invoke(test, op)
+                            result = _worker.invoke(op)
                             _out.put(result)
                             logging.info(str(result))
                             exit_flag = False
@@ -171,7 +174,7 @@ def spawn_worker(test, out: queue, worker, id) -> dict:
                     exit_flag = True
 
         finally:
-            _worker.close(test)
+            _worker.close()
             threading.current_thread().name = old_name
 
     # 目前使用concurrent.futures模块新建线程去evaluate，效果待验证
@@ -224,7 +227,7 @@ def run(test):
 
         def _run_recursive(ctx, gene, outstanding, poll_timeout, history):
             try:
-                cur_op = None if completions.empty() else completions.get(timeout=poll_timeout)
+                cur_op = completions.get(timeout=poll_timeout)
             except queue.Empty:
                 cur_op = None
                 pass  # 忽略queue内置的超时抛的Empty异常

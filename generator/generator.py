@@ -56,7 +56,7 @@ def op(gen, test, context):
         return gen.op(gen, test, context)
 
 
-class Generator(metaclass=ABC):
+class Generator(ABC):
     @abstractmethod
     def update(self, gen, test, context, event):
         """
@@ -109,7 +109,7 @@ def get_all_processes(context):
 def get_some_free_process(context):
     free_threads = context['free-threads']
     if len(free_threads) == 0:
-        return None
+        return -1
     else:
         return context['workers'][random.choice(list(free_threads))]
 
@@ -147,7 +147,7 @@ Generator
 def fill_in_op(op, context):
     """ 使用context填补op缺失的键值对字段 type, process, time """
     p = get_some_free_process(context)
-    if p:
+    if p >= 0:
         if op.get("time") is None: op["time"] = context["time"]
         if op.get("process") is None: op["process"] = p
         if op.get("type") is None: op["type"] = "invoke"
@@ -180,9 +180,9 @@ class Validate(Generator):
                         problems.append("type value should be 'invoke', 'info', 'sleep' or 'log'")
                     if not isinstance(op_var['time'], float):
                         problems.append("time value should be a float")
-                    if not op_var['process']:
+                    if op_var['process'] is None:
                         problems.append("no process")
-                    if op_var['process'] and op_var['process'] not in get_free_processes(context):
+                    if op_var['process'] is not None and op_var['process'] not in get_free_processes(context):
                         problems.append("process {} is not free".format(op_var['process']))
 
             if problems:
@@ -223,7 +223,8 @@ class FriendlyExceptions(Generator):
             errmsg = "Generator threw {} when asked for an operation\n" \
                      "Generator:{}\n" \
                      "Context:{}\n" \
-                .format(repr(e), self.gen.gen if self.gen else "None", pprint.pformat(context, indent=2).replace('\'', ''))
+                .format(repr(e), self.gen.gen if self.gen else "None",
+                        pprint.pformat(context, indent=2).replace('\'', ''))
             raise Exception(errmsg)
 
     def update(self, _, test, context, event):
@@ -545,6 +546,7 @@ class Reserve(Generator):
             for i, _range in enumerate(self.ranges):
                 if thread in _range:
                     return i
+
         index = fn()
         return Reserve(self.ranges,
                        self.all_ranges,
@@ -562,7 +564,7 @@ def reserve(*args):
     arg_cnt = len(args)
     assert arg_cnt > 0 and arg_cnt % 2 == 1
     default_gen = args[-1]
-    cnt_gen = [args[i:i+2] for i in range(0, arg_cnt-1, 2)]
+    cnt_gen = [args[i:i + 2] for i in range(0, arg_cnt - 1, 2)]
     n, pre = 0, 0
     ranges = []
     gens = []
@@ -690,11 +692,11 @@ class Mix(Generator):
             if res := op(gen, test, context):
                 op_var, gen2 = res[0], res[1]
                 gens[i] = gen2  # 更新gen状态
-                return [op_var, Mix(random.randint(0, len(gens)-1), gens)]
+                return [op_var, Mix(random.randint(0, len(gens) - 1), gens)]
             else:
                 del gens[i]  # 使命结束，从列表中删除
                 return op(
-                    Mix(random.randint(0, len(gens)-1), gens),
+                    Mix(random.randint(0, len(gens) - 1), gens),
                     test, context
                 )
         else:
@@ -705,7 +707,7 @@ class Mix(Generator):
 
 
 def mix(gens):
-    return Mix(random.randint(0, len(gens)-1), gens)
+    return Mix(random.randint(0, len(gens) - 1), gens)
 
 
 class Limit(Generator):
@@ -878,6 +880,11 @@ class TimeLimit(Generator):
                         return [op_var, TimeLimit(t_limit, deadline, gen2)]
                     else:
                         return None
+                else:
+                    if op_var['time'] < deadline:
+                        return [op_var, TimeLimit(t_limit, deadline, gen2)]
+                    else:
+                        return None
 
     def update(self, _, test, context, event):
         return TimeLimit(self.t_limit, self.deadline,
@@ -1019,7 +1026,7 @@ class UntilOk(Generator):
 
     def update(self, _, test, context, event):
         gen, done, active_processes = self.gen, self.done, self.active_processes
-        gen2 = update(gen, test ,context, event)
+        gen2 = update(gen, test, context, event)
         p = event["process"]
         if p in active_processes:
             match event["type"]:
@@ -1052,7 +1059,7 @@ class FlipFlop(Generator):
         if res := op(gens[i], test, context):
             op_var, gen2 = res[0], res[1]
             gens[i] = gen2
-            return [op_var, FlipFlop((i+1) % len(gens), gens)]
+            return [op_var, FlipFlop((i + 1) % len(gens), gens)]
         else:
             return None
 
@@ -1063,6 +1070,5 @@ class FlipFlop(Generator):
 def flip_flop(a, b):
     """ 接受两个generator a和b， 二者交替抛出op（a->b->a->b...），直到其中一个无法抛出op（None）， 忽略update """
     return FlipFlop(0, [a, b])
-
 
 # TODO GeneratorWrapperClass: Trace CycleTimes
