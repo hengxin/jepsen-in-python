@@ -98,7 +98,7 @@ if __name__ == '__main__':
         gen.mix,
         partial(gen.stagger, 1),
         partial(gen.nemesis, None),
-        partial(gen.time_limit, 60)
+        partial(gen.time_limit, 600000)
     ])([read, write, cas])
     gen_inter.jepsen_clients = []
     # 2. 创建所测试的分布式数据库节点对应的clients

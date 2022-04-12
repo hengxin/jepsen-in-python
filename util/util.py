@@ -3,7 +3,7 @@ import logging
 import yaml
 
 # dynamic, float
-relative_time_origin = None
+global relative_time_origin
 
 
 def read_config(filename):

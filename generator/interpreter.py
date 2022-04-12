@@ -78,9 +78,9 @@ class ClientWorker(Worker):
                 return op_fail
 
             # 使用新的client去执行op
-            self.invoke(op)
+            return self.invoke(op)
         else:
-            self.client.operate(op)
+            return self.client.operate(op)
 
     def close(self):
         if self.client:
