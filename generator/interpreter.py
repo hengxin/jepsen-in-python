@@ -7,6 +7,7 @@
 """
 负责获取generator产生的op并交予clients/nemesis执行，管理worker生命周期，并记录历史。
 """
+import sys
 from functools import partial
 import time
 import threading
@@ -25,8 +26,41 @@ Measured in seconds.
 """
 MAX_PENDING_INTERVAL = 1.0
 global jepsen_clients
-
 global jepsen_nemesis
+
+
+class TailRecurseException(BaseException):
+    def __init__(self, args, kwargs):
+        self.args = args
+        self.kwargs = kwargs
+
+
+def tail_call_optimized(g):
+    """
+    This function decorates a function with tail call
+    optimization. It does this by throwing an exception
+    if it is it's own grandparent, and catching such
+    exceptions to fake the tail call optimization.
+
+    This function fails if the decorated5
+    function recurses in a non-tail context.
+    """
+
+    def func(*args, **kwargs):
+        f = sys._getframe()
+        if f.f_back and f.f_back.f_back and f.f_back.f_back.f_code == f.f_code:
+            raise TailRecurseException(args, kwargs)
+        else:
+            while 1:
+                try:
+                    return g(*args, **kwargs)
+                except TailRecurseException as e:
+                    args = e.args
+                    kwargs = e.kwargs
+
+    func.__doc__ = g.__doc__
+    return func
+
 
 class Worker(ABC):
     @abstractmethod
@@ -225,34 +259,35 @@ def run(test):
         poll_timeout_0 = 0.0
         history_0 = []
 
+        @tail_call_optimized
         def _run_recursive(ctx, gene, outstanding, poll_timeout, history):
             try:
                 if poll_timeout != 0:
-                    cur_op = completions.get(timeout=poll_timeout)
+                    finished_op = completions.get(timeout=poll_timeout)
                 else:
-                    cur_op = completions.get_nowait()
+                    finished_op = completions.get_nowait()
             except queue.Empty:
-                cur_op = None
+                finished_op = None
                 pass  # 忽略queue内置的超时抛的Empty异常
 
-            if cur_op:
-                # print(cur_op)
-                cur_thread = gen.process2thread(ctx, cur_op['process'])
+            if finished_op:
+                # print(finished_op)
+                cur_thread = gen.process2thread(ctx, finished_op['process'])
                 time_taken = util.compute_relative_time()
-                cur_op.update({"time": time_taken})  # 更新时间戳
+                finished_op.update({"time": time_taken})  # 更新时间戳
                 # 更新时间戳及线程释放信息
                 ctx.update({"time": time_taken})
                 ctx['free-threads'].add(cur_thread)
 
-                gene = gen.update(gene, test, ctx, cur_op)
+                gene = gen.update(gene, test, ctx, finished_op)
 
-                if cur_thread == 'nemesis' or cur_op['type'] != 'info':
+                if cur_thread == 'nemesis' or finished_op['type'] != 'info':
                     pass
                 else:  # 崩溃的线程（不包括nemesis线程）应该分配新的标识符
                     ctx['workers'][cur_thread] = gen.next_process(ctx, cur_thread)
 
-                if goes_in_history(cur_op):
-                    history.append(cur_op)
+                if goes_in_history(finished_op):
+                    history.append(finished_op)
                 # 记录历史并继续
                 return _run_recursive(ctx, gene, outstanding - 1, 0, history)
 

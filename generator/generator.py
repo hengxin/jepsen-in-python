@@ -916,7 +916,7 @@ class Stagger(Generator):
                 return [op_var, this]  # 原样返回
             elif next_time <= op_var['time']:
                 return [op_var, Stagger(dt, (op_var['time'] + random.uniform(0, dt)), gen2)]
-            else:
+            else:  # not ready
                 op_var["time"] = next_time
                 return [op_var, Stagger(dt, (next_time + random.uniform(0, dt)), gen2)]
         else:
