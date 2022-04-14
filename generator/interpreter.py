@@ -188,9 +188,10 @@ def spawn_worker(out: queue, worker, id) -> dict:
                             _out.put(op)
                             exit_flag = False
                         case _:  # invoke
+                            logging.info("{} got op: {}".format(threading.current_thread().name, op))
                             result = _worker.invoke(op)
                             _out.put(result)
-                            logging.info(str(result))
+                            # logging.info(str(result))
                             exit_flag = False
 
                 except Exception as e:
@@ -276,6 +277,8 @@ def run(test):
                 # 更新时间戳及线程释放信息
                 ctx.update({"time": time_taken})
                 ctx['free-threads'].add(cur_thread)
+
+                logging.info("jepsen worker {} finished op: {}".format(cur_thread, finished_op))
                 gene = gen.update(gene, test, ctx, finished_op)
 
                 if cur_thread == 'nemesis' or finished_op['type'] != 'info':

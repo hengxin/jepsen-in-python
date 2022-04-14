@@ -44,11 +44,7 @@ class client:
             pass
 
     def operate(self, op):
-        logging.info(self.hostname)
-        logging.info(op)
         exec_op_response = self.operation(self.database_connection, op)
         exec_op_response["process"] = op["process"]
-        logging.info(self.hostname)
-        logging.info(exec_op_response)
         return exec_op_response
 

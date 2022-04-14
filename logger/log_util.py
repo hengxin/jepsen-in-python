@@ -30,13 +30,13 @@ class log:
                             level=logging.INFO,
                             logger=logger)
 
-    def write_history(self, process, type, function, value):
+    def write_history(self, process, type, function, value, time):
         if not value:
             value = "nil"
         if value.__class__ == list:
             value = "[{}]".format(",".join(str(i) for i in value))
         with open(self.history_file, 'a') as f:
             f.write('{')
-            f.write(":process {}, :type :{}, :f :{}, :value {}".format(str(process), type, function, value))
+            f.write(":process {}, :type :{}, :f :{}, :value {}, :time {}".format(str(process), type, function, value, time))
             f.write("}\n")
         f.close()

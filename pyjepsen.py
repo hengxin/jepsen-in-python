@@ -139,7 +139,7 @@ if __name__ == '__main__':
         # 2. 创建所测试的分布式数据库节点对应的clients
         for node in server_config:
             new_client = client(server_config[node], etcd_database, database_config, operation)
-            gen_inter.jepsen_clients.append(new_client)
+            jepsen_clients.append(new_client)
 
         # 3. setup数据库
         for client in jepsen_clients:
@@ -161,7 +161,7 @@ if __name__ == '__main__':
 
         # 5.2 运行时dict日志转换为knossos可识别的clojure的Map格式日志文件
         for op_result in op_exec_history:
-            logger.write_history(op_result['process'], op_result['type'], op_result['f'], op_result['value'])
+            logger.write_history(op_result['process'], op_result['type'], op_result['f'], op_result['value'], op_result['time'])
 
         # 6. 传入日记文件创建checker
         jepsen_checker = checker(logger.history_file, checker_config)
