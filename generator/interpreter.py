@@ -197,8 +197,6 @@ def spawn_worker(out: queue, worker, id) -> dict:
                         case _:  # invoke, info, fail
                             logging.info("{} got op: {}".format(threading.current_thread().name, op))
                             result = _worker.invoke(op)
-                            if result["type"] == "info":
-                                raise Exception
                             _out.put(result)
                             # logging.info(str(result))
                             exit_flag = False
