@@ -18,6 +18,7 @@ import queue
 import generator.generator as gen
 import util.util as util
 from abc import ABC, abstractmethod
+from util.globalvars import GlobalVars
 
 """
 When the generator is :pending, this controls the maximum interval before
@@ -25,8 +26,6 @@ we'll update the context and check the generator for an operation again.
 Measured in seconds.
 """
 MAX_PENDING_INTERVAL = 1.0
-global jepsen_clients
-global jepsen_nemesis
 
 
 class TailRecurseException(BaseException):
@@ -83,14 +82,14 @@ class ClientWorker(Worker):
         self.id = id
 
     def open(self, id):
-        global jepsen_clients
-        self.client = jepsen_clients[id]
+        clis = GlobalVars.get_clients()
+        self.client = clis[id]
         self.id = id
         self.client.connect_db()
         return self
 
     def invoke(self, op):
-        global jepsen_clients
+        clis = GlobalVars.get_clients()
         if self.process != op['process']:
             # 说明thread发生崩溃，分配了新的process
             # 关闭当前ClientWorker并创建新的
@@ -98,7 +97,7 @@ class ClientWorker(Worker):
 
             # 尝试打开新的client
             try:
-                self.client = jepsen_clients[self.id]
+                self.client = clis[self.id]
                 self.client.connect_db()
                 self.process = op['process']
             except Exception as e:
@@ -124,8 +123,8 @@ class ClientWorker(Worker):
 
 class NemesisWorker(Worker):
     def __init__(self):
-        global jepsen_nemesis
-        self.nemesis = jepsen_nemesis
+        nemesis = GlobalVars.get_nemesis()
+        self.nemesis = nemesis
 
     def open(self, id):
         return self
@@ -155,9 +154,8 @@ def client_nemesis_worker():
     return ClientNemesisWorker()
 
 
-def spawn_worker(test, out: queue, worker, id) -> dict:
+def spawn_worker(out: queue, worker, id) -> dict:
     """
-    :param test:
     :param out: 接收已完成op的队列
     :param worker: worker对象
     :param id: worker的id
@@ -245,7 +243,7 @@ def run(test):
     worker_ids = gen.get_all_threads(ctx)
     completions = queue.Queue(maxsize=len(worker_ids))
     workers = list(map(
-        partial(spawn_worker, test, completions, client_nemesis_worker()),
+        partial(spawn_worker, completions, client_nemesis_worker()),
         worker_ids))
     invocations = {}
     for worker in workers:

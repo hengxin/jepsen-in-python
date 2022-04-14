@@ -18,6 +18,7 @@ import random
 from fastcore.transform import Pipeline
 from functools import partial
 from generator import generator as gen, interpreter as gen_inter
+from util.globalvars import GlobalVars
 
 
 def operation(database_connection, history):
@@ -85,7 +86,6 @@ def cas():
     }
 
 
-
 if __name__ == '__main__':
     jepsen_config = util.read_config("config.yaml")
     server_config = jepsen_config["server"]
@@ -96,25 +96,30 @@ if __name__ == '__main__':
     # 1. 根据自己实际测试需要配置组装generator
     jepsen_config["generator"] = Pipeline([
         gen.mix,
-        #partial(gen.stagger, 1),
+        # partial(gen.stagger, 1),
         partial(gen.nemesis, None),
         partial(gen.time_limit, 600000)
     ])([read, write, cas])
-    gen_inter.jepsen_clients = []
+
+    jepsen_clients = []
     try:
         # 2. 创建所测试的分布式数据库节点对应的clients
         for node in server_config:
             new_client = client(server_config[node], database_config, operation)
-            gen_inter.jepsen_clients.append(new_client)
+            jepsen_clients.append(new_client)
 
         # 3. setup数据库
-        for client in gen_inter.jepsen_clients:
+        for client in jepsen_clients:
             t = Thread(target=client.setup_db())
             t.start()
         time.sleep(20)
 
         # 4. 创建nemesis
-        gen_inter.jepsen_nemesis = nemesis(gen_inter.jepsen_clients, nemesis_config)
+        jepsen_nemesis = nemesis(jepsen_clients, nemesis_config)
+
+        # 将初始化的clients和nemesis注入globalvars
+        GlobalVars.set_clients(jepsen_clients)
+        GlobalVars.set_nemesis(jepsen_nemesis)
 
         # 5.1 运行generator，获得op结果日志（dict格式）
         op_exec_history = util.with_relative_time(
@@ -154,4 +159,3 @@ if __name__ == '__main__':
         # 7. shutdown数据库
         for client in gen_inter.jepsen_clients:
             client.shutdown_db()
-
