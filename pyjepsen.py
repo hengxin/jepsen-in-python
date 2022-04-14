@@ -4,6 +4,8 @@
 # @Email   : 2764065464@qq.com
 # @File    : pyjepsen.py
 import logging
+import traceback
+
 import etcd3
 from checker.checker import checker
 from util import util
@@ -22,40 +24,32 @@ from util.globalvars import GlobalVars
 
 def operation(database_connection, history):
     function_name = history["f"]
-    try:
-        if function_name == "write":
-            database_connection.put("foo", history["value"])
-            return {
-                "type": "ok",
-                "f": "write",
-                "value": history["value"]
-            }
-        elif function_name == "read":
-            read_result = database_connection.get("foo")
-            return {
-                "type": "ok",
-                "f": "read",
-                "value": int(read_result[0]) if read_result[0] else None
-            }
-        elif function_name == "cas":
-            cas_result = database_connection.replace("foo", history["value"][0], history["value"][1])
-            return {
-                "type": "ok" if cas_result else "fail",
-                "f": "cas",
-                "value": history["value"]
-            }
-    except Exception:
-        logging.error(Exception.with_traceback())
-        logging.error(Exception)
+    if function_name == "write":
+        database_connection.put("foo", history["value"])
         return {
-            "type": "info",
-            "f": function_name,
-            "value": None
+            "type": "ok",
+            "f": "write",
+            "value": history["value"]
         }
-        pass
-    # finally:
+    elif function_name == "read":
+        read_result = database_connection.get("foo")
+        return {
+            "type": "ok",
+            "f": "read",
+            "value": int(read_result[0]) if read_result[0] else None
+        }
+    elif function_name == "cas":
+        cas_result = database_connection.replace("foo", history["value"][0], history["value"][1])
+        return {
+            "type": "ok" if cas_result else "fail",
+            "f": "cas",
+            "value": history["value"]
+        }
+    # except Exception as e:
+    #     logging.error(traceback.format_exc())
+    #     logging.error(repr(e))
     #     return {
-    #         "type": "fail",
+    #         "type": "info",
     #         "f": function_name,
     #         "value": None
     #     }
@@ -130,8 +124,13 @@ if __name__ == '__main__':
     jepsen_config["generator"] = Pipeline([
         gen.mix,
         # partial(gen.stagger, 1),
-        partial(gen.nemesis, None),
-        partial(gen.time_limit, 30)
+        partial(gen.nemesis, gen.cycle([
+            gen.sleep(5),
+            {"type": "info", "f": "start"},
+            gen.sleep(5),
+            {"type": "info", "f": "stop"}
+        ])),
+        partial(gen.time_limit, 15)
     ])([read, write, cas])
 
     jepsen_clients = []
@@ -170,4 +169,5 @@ if __name__ == '__main__':
     finally:
         # 7. shutdown数据库
         for client in jepsen_clients:
-            client.shutdown_db()
+            if client:
+                client.shutdown_db()

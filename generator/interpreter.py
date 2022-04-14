@@ -97,11 +97,11 @@ class ClientWorker(Worker):
 
             # 尝试打开新的client
             try:
+                self.process = op['process']
                 self.client = clis[self.id]
                 self.client.connect_db()
-                self.process = op['process']
             except Exception as e:
-                logging.warning(repr(e) + " >> Error opening client.")
+                logging.warning("jepsen worker {} {}  >> Error opening client.".format(str(self.id), repr(e)))
                 self.client = None
                 op_fail = op.copy()
                 op_fail.update({
@@ -130,7 +130,11 @@ class NemesisWorker(Worker):
         return self
 
     def invoke(self, op):
-        return self.nemesis.start()
+        f = op["f"]
+        if f == "start":
+            return self.nemesis.start()
+        elif f == "stop":
+            return self.nemesis.stop()
 
     def close(self):
         return
@@ -190,9 +194,11 @@ def spawn_worker(out: queue, worker, id) -> dict:
                             logging.info(op['value'])
                             _out.put(op)
                             exit_flag = False
-                        case _:  # invoke
+                        case _:  # invoke, info, fail
                             logging.info("{} got op: {}".format(threading.current_thread().name, op))
                             result = _worker.invoke(op)
+                            if result["type"] == "info":
+                                raise Exception
                             _out.put(result)
                             # logging.info(str(result))
                             exit_flag = False
@@ -207,7 +213,8 @@ def spawn_worker(out: queue, worker, id) -> dict:
                         "error": traceback.format_exc()
                     })
                     _out.put(op_info)
-                    exit_flag = True
+                    logging.warning(repr(e) + " >> Process {} crashed.".format(op['process']))
+                    exit_flag = False
 
         finally:
             _worker.close()
@@ -264,7 +271,7 @@ def run(test):
         @tail_call_optimized
         def _run_recursive(ctx, gene, outstanding, poll_timeout, history):
             try:
-                if poll_timeout != 0:
+                if poll_timeout != 0.0:
                     finished_op = completions.get(timeout=poll_timeout)
                 else:
                     finished_op = completions.get_nowait()

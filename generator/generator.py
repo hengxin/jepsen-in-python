@@ -131,7 +131,7 @@ def thread2process(context, thread):
 
 
 def next_process(context, thread):
-    """仅在 *全局的* context中使用，用以在某线程崩溃时给出该线程的下一个process"""
+    """仅在 *全局的* context中使用，用以在某线程崩溃时给出该线程的下一个process号"""
     if thread != 'nemesis':
         return context['workers'][thread] + \
                len(list(filter_builtin(lambda x: x != 'nemesis', get_all_processes(context))))
@@ -147,7 +147,7 @@ Generator
 def fill_in_op(op, context):
     """ 使用context填补op缺失的键值对字段 type, process, time """
     p = get_some_free_process(context)
-    if p >= 0:
+    if p == "nemesis" or p >= 0:
         if op.get("time") is None: op["time"] = context["time"]
         if op.get("process") is None: op["process"] = p
         if op.get("type") is None: op["type"] = "invoke"

@@ -17,12 +17,10 @@ class kill_nemesis:
         hostname = self.clients[index].hostname
         logging.info("start kill nemesis to shut down db on client {}".format(hostname))
         self.clients[index].shutdown_db()
-        self.clients.remove(self.clients[index])
+        self.clients[index] = None
         logging.info("killed db on client {}".format(hostname))
-        pass
+        return {"type": "info", "f": "start", "value": "killed db on client {}".format(hostname)}
 
     def stop(self):
         # do noting
-        pass
-
-
+        return {"type": "info", "f": "stop", "value": "do nothing"}
