@@ -157,5 +157,5 @@ if __name__ == '__main__':
         jepsen_checker.check()
     finally:
         # 7. shutdown数据库
-        for client in gen_inter.jepsen_clients:
+        for client in jepsen_clients:
             client.shutdown_db()
