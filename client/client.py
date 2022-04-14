@@ -25,7 +25,10 @@ class client:
         return self.database.setup
 
     def shutdown_db(self):
-        self.database.shutdown()
+        if self.database:
+            self.database.shutdown()
+        else:
+            pass
 
     def recover(self):
         t = Thread(target=self.setup_db())

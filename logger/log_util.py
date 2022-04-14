@@ -33,11 +33,12 @@ class log:
     def write_history(self, histories):
         with open(self.history_file, 'a') as f:
             for history in histories:
-                process = history["process"]
+                process = history["process"] if history["process"] != "nemesis" else ":nemesis"
                 type = history["type"]
                 function = history["f"]
-                v = history["value"]
-                value = ("[{}]".format(",".join(str(i) for i in v)) if v.__class__ == list else v) \
+                v = history["value"] if "value" in history else None
+                value = ("[{}]".format(",".join(str(i) for i in v)) if v.__class__ == list else
+                         (v if process != ":nemesis" else "[{}]".format(v))) \
                     if v else "nil"
                 time = history["time"] if "time" in history else "nil"
                 f.write('{')
