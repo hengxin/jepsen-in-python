@@ -45,7 +45,7 @@ def operation(database_connection, history):
                 "value": history["value"]
             }
     except Exception:
-        logging.error("somthing wrong")
+        logging.error(Exception.with_traceback())
         logging.error(Exception)
         return {
             "type": "info",
@@ -160,32 +160,11 @@ if __name__ == '__main__':
         )
 
         # 5.2 运行时dict日志转换为knossos可识别的clojure的Map格式日志文件
-        for op_result in op_exec_history:
-            logger.write_history(op_result['process'], op_result['type'], op_result['f'], op_result['value'], op_result['time'])
+        logger.write_history(op_exec_history)
 
         # 6. 传入日记文件创建checker
         jepsen_checker = checker(logger.history_file, checker_config)
 
-        # try:
-        #     for client in client_list:
-        #         client.connect_db()
-        #     # 把list交给generator去操作
-        #     method_list = [write, read, cas]
-        #     client_list[0].operate(method_list[0])
-        #     for i in range(30):
-        #         client_list[random.randint(0, len(client_list) - 1)].operate(
-        #             method_list[random.randint(0, len(method_list) - 1)])
-        #     jepsen_nemesis.start()
-        #     for i in range(30):
-        #         client_list[random.randint(0, len(client_list) - 1)].operate(
-        #             method_list[random.randint(0, len(method_list) - 1)])
-        #     jepsen_nemesis.stop()
-        #     for i in range(30):
-        #         client_list[random.randint(0, len(client_list) - 1)].operate(
-        #             method_list[random.randint(0, len(method_list) - 1)])
-        # except Exception:
-        #     logging.error("somthing wrong")
-        #     logging.error(Exception.with_traceback())
         # 8. 调用knossos验证数据一致性
         jepsen_checker.check()
     finally:

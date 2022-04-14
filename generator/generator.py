@@ -133,7 +133,7 @@ def thread2process(context, thread):
 def next_process(context, thread):
     """仅在 *全局的* context中使用，用以在某线程崩溃时给出该线程的下一个process"""
     if thread != 'nemesis':
-        return context['worker'][thread] + \
+        return context['workers'][thread] + \
                len(list(filter_builtin(lambda x: x != 'nemesis', get_all_processes(context))))
     else:
         return thread
