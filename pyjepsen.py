@@ -4,16 +4,15 @@
 # @Email   : 2764065464@qq.com
 # @File    : pyjepsen.py
 import logging
-
+import etcd3
 from checker.checker import checker
 from util import util
 from client.client import client
 from logger.log_util import log
 from threading import Thread
 from nemesis.nemesis import nemesis
-from nemesis.judge import *
+from db.database import database_op
 import time
-import os
 import random
 from fastcore.transform import Pipeline
 from functools import partial
@@ -86,6 +85,40 @@ def cas():
     }
 
 
+class etcd_database(database_op):
+    def setup(self):
+        root_path = self.ssh_client.pwd() + "/tmp/"
+        self.ssh_client.wget(url="https://storage.googleapis.com/etcd/v3.1.5/etcd-v3.1.5-linux-amd64.tar.gz")
+        self.ssh_client.mkdir(root=root_path, filename="etcd")
+        self.ssh_client.unzip(file_name="{}etcd-v3.1.5-linux-amd64.tar.gz".format(root_path),
+                              opts={
+                                  "-C": root_path + "/etcd",
+                                  "--strip-components": 1
+                              })
+        self.ssh_client.touch(root=root_path, filename="etcd.log")
+        self.ssh_client.exec_sudo_command(command="{}etcd/etcd".format(root_path),
+                                          opts={
+                                              "--log-output": "stdout",
+                                              "--name": self.hostname,
+                                              "--listen-peer-urls": "http://0.0.0.0:2380",
+                                              "--listen-client-urls": "http://0.0.0.0:2379",
+                                              "--advertise-client-urls": "http://{0}:2379".format(self.hostname),
+                                              "--initial-cluster-state": "new",
+                                              "--initial-advertise-peer-urls": "http://{0}:2380".format(self.hostname),
+                                              "--initial-cluster": self.initial_cluster,
+                                              "1>{}etcd.log".format(root_path): ""
+                                          })
+
+    def shutdown(self):
+        root_path = self.ssh_client.pwd() + "/*"
+        self.ssh_client.kill_by_process("etcd")
+        self.ssh_client.exec_sudo_command("rm -rf {}".format(root_path))
+
+    def connect_database(self):
+        return etcd3.client(host=self.hostname, port=self.port)
+
+
+
 if __name__ == '__main__':
     jepsen_config = util.read_config("config.yaml")
     server_config = jepsen_config["server"]
@@ -98,15 +131,15 @@ if __name__ == '__main__':
         gen.mix,
         # partial(gen.stagger, 1),
         partial(gen.nemesis, None),
-        partial(gen.time_limit, 600000)
+        partial(gen.time_limit, 30)
     ])([read, write, cas])
 
     jepsen_clients = []
     try:
         # 2. 创建所测试的分布式数据库节点对应的clients
         for node in server_config:
-            new_client = client(server_config[node], database_config, operation)
-            jepsen_clients.append(new_client)
+            new_client = client(server_config[node], etcd_database, database_config, operation)
+            gen_inter.jepsen_clients.append(new_client)
 
         # 3. setup数据库
         for client in jepsen_clients:

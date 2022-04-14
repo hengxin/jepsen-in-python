@@ -276,7 +276,6 @@ def run(test):
                 # 更新时间戳及线程释放信息
                 ctx.update({"time": time_taken})
                 ctx['free-threads'].add(cur_thread)
-
                 gene = gen.update(gene, test, ctx, finished_op)
 
                 if cur_thread == 'nemesis' or finished_op['type'] != 'info':
@@ -287,7 +286,7 @@ def run(test):
                 if goes_in_history(finished_op):
                     history.append(finished_op)
                 # 记录历史并继续
-                return _run_recursive(ctx, gene, outstanding - 1, 0, history)
+                return _run_recursive(ctx, gene, outstanding - 1, 0.0, history)
 
             else:
                 time_taken = util.compute_relative_time()
@@ -325,7 +324,7 @@ def run(test):
                         else:
                             cur_thread = gen.process2thread(ctx, op_var['process'])
                             in_queue = invocations[cur_thread]
-                            in_queue.put(op_var)
+                            in_queue.put_nowait(op_var)
                             # 更新时间戳及线程占用信息
                             ctx.update({"time": op_var['time']})
                             ctx['free-threads'].remove(cur_thread)
@@ -334,7 +333,7 @@ def run(test):
                             if goes_in_history(op_var):
                                 history.append(op_var)
 
-                            return _run_recursive(ctx, gene2, outstanding + 1, 0, history)
+                            return _run_recursive(ctx, gene2, outstanding + 1, 0.0, history)
 
         return _run_recursive(ctx, gene, outstanding_0, poll_timeout_0, history_0)
 

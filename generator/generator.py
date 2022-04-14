@@ -912,6 +912,9 @@ class Stagger(Generator):
             op_var, gen2 = res[0], res[1]
             now = context['time']
             next_time = next_time or now
+            # print("next_time: {}, op_var[time]: {}".format(next_time, op_var["time"]))
+            # print("next_time-op_var[time]: {}".format(next_time-op_var["time"]))
+            # print("now_time-op_var[time]: {}".format(now-op_var["time"]))
             if op_var == 'pending':
                 return [op_var, this]  # 原样返回
             elif next_time <= op_var['time']:
@@ -949,7 +952,7 @@ class Delay(Generator):
                 op_var.update({
                     "time": max(op_var["time"], next_time)
                 })
-                return [op_var, Delay(dt, op["time"] + dt, gen2)]
+                return [op_var, Delay(dt, op_var["time"] + dt, gen2)]
         else:
             return None
 

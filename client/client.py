@@ -7,12 +7,11 @@ import logging
 import random
 import time
 from util.ssh import ssh_client
-from db.database import database_op
 from threading import Thread
 
 
 class client:
-    def __init__(self, node, database_config, operation):
+    def __init__(self, node, database_op, database_config, operation):
         self.hostname = node["hostname"]
         self.port = node["port"]
         self.username = node["username"]
