@@ -211,7 +211,6 @@ def spawn_worker(out: queue, worker, id) -> dict:
                         "error": traceback.format_exc()
                     })
                     _out.put(op_info)
-                    logging.warning(repr(e) + " >> Process {} crashed.".format(op['process']))
                     exit_flag = False
 
         finally:

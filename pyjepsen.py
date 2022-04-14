@@ -24,35 +24,36 @@ from util.globalvars import GlobalVars
 
 def operation(database_connection, history):
     function_name = history["f"]
-    if function_name == "write":
-        database_connection.put("foo", history["value"])
+    try:
+        if function_name == "write":
+            database_connection.put("foo", history["value"])
+            return {
+                "type": "ok",
+                "f": "write",
+                "value": history["value"]
+            }
+        elif function_name == "read":
+            read_result = database_connection.get("foo")
+            return {
+                "type": "ok",
+                "f": "read",
+                "value": int(read_result[0]) if read_result[0] else None
+            }
+        elif function_name == "cas":
+            cas_result = database_connection.replace("foo", history["value"][0], history["value"][1])
+            return {
+                "type": "ok" if cas_result else "fail",
+                "f": "cas",
+                "value": history["value"]
+            }
+    except Exception as e:
+        logging.error(traceback.format_exc())
+        logging.error(repr(e))
         return {
-            "type": "ok",
-            "f": "write",
-            "value": history["value"]
+            "type": "info",
+            "f": function_name,
+            "value": None
         }
-    elif function_name == "read":
-        read_result = database_connection.get("foo")
-        return {
-            "type": "ok",
-            "f": "read",
-            "value": int(read_result[0]) if read_result[0] else None
-        }
-    elif function_name == "cas":
-        cas_result = database_connection.replace("foo", history["value"][0], history["value"][1])
-        return {
-            "type": "ok" if cas_result else "fail",
-            "f": "cas",
-            "value": history["value"]
-        }
-    # except Exception as e:
-    #     logging.error(traceback.format_exc())
-    #     logging.error(repr(e))
-    #     return {
-    #         "type": "info",
-    #         "f": function_name,
-    #         "value": None
-    #     }
 
 
 def write():
@@ -120,18 +121,7 @@ if __name__ == '__main__':
     nemesis_config = jepsen_config["nemesis"]
     checker_config = jepsen_config["checker"]
     logger = log({})  # 可传入日志的相关配置
-    # 1. 根据自己实际测试需要配置组装generator
-    jepsen_config["generator"] = Pipeline([
-        gen.mix,
-        # partial(gen.stagger, 1),
-        partial(gen.nemesis, gen.cycle([
-            gen.sleep(5),
-            {"type": "info", "f": "start"},
-            gen.sleep(5),
-            {"type": "info", "f": "stop"}
-        ])),
-        partial(gen.time_limit, 15)
-    ])([read, write, cas])
+
 
     jepsen_clients = []
     try:
@@ -152,6 +142,19 @@ if __name__ == '__main__':
         # 将初始化的clients和nemesis注入globalvars
         GlobalVars.set_clients(jepsen_clients)
         GlobalVars.set_nemesis(jepsen_nemesis)
+
+        # 1. 根据自己实际测试需要配置组装generator
+        jepsen_config["generator"] = Pipeline([
+            gen.mix,
+            # partial(gen.stagger, 1),
+            partial(gen.nemesis, gen.cycle([
+                gen.sleep(5),
+                {"type": "info", "f": "start"},
+                gen.sleep(5),
+                {"type": "info", "f": "stop"}
+            ])),
+            partial(gen.time_limit, 30)
+        ])([read, write, cas])
 
         # 5.1 运行generator，获得op结果日志（dict格式）
         op_exec_history = util.with_relative_time(

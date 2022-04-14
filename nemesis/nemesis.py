@@ -50,11 +50,9 @@ class nemesis:
 
     def start(self):
         if self.n:
-            self.n.start()
-        pass
+            return self.n.start()
 
     def stop(self):
         if self.n:
-            self.n.stop()
-        pass
+            return self.n.stop()
 
