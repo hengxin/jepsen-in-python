@@ -325,6 +325,7 @@ def run(test):
                     else:  # 得到一个op invocation
                         # 时间未到，还不能处理
                         if time_taken < op_var['time']:
+                            # time.sleep(op_var['time'] - time_taken)
                             return _run_recursive(ctx, gene, outstanding,
                                                   op_var['time'] - time_taken, history)
                         else:

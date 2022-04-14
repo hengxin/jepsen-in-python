@@ -892,6 +892,8 @@ class TimeLimit(Generator):
 
 
 def time_limit(t_limit, gen):
+    if t_limit > 12 * 3600:
+        logging.warning("time_limit is set too long, memory could be out of limit.")
     return TimeLimit(float(t_limit), None, gen)
 
 
