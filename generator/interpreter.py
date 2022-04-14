@@ -319,7 +319,7 @@ def run(test):
                         return _run_recursive(ctx, gene, outstanding,
                                               MAX_PENDING_INTERVAL, history)
 
-                    else:  # 得到一个op
+                    else:  # 得到一个op invocation
                         # 时间未到，还不能处理
                         if time_taken < op_var['time']:
                             return _run_recursive(ctx, gene, outstanding,

@@ -111,7 +111,7 @@ def get_some_free_process(context):
     if len(free_threads) == 0:
         return -1
     else:
-        return context['workers'][random.choice(list(free_threads))]
+        return context['workers'][random.choice(tuple(free_threads))]
 
 
 def get_free_threads(context) -> set:
@@ -702,8 +702,8 @@ class Mix(Generator):
         else:
             return None
 
-    def update(self, gen, test, context, event):
-        return gen
+    def update(self, this, test, context, event):
+        return this
 
 
 def mix(gens):
@@ -917,10 +917,8 @@ class Stagger(Generator):
             # print("now_time-op_var[time]: {}".format(now-op_var["time"]))
             if op_var == 'pending':
                 return [op_var, this]  # 原样返回
-            elif next_time <= op_var['time']:
-                return [op_var, Stagger(dt, (op_var['time'] + random.uniform(0, dt)), gen2)]
-            else:  # not ready
-                op_var["time"] = next_time
+            else:
+                op_var["time"] = max(op_var['time'], next_time)
                 return [op_var, Stagger(dt, (next_time + random.uniform(0, dt)), gen2)]
         else:
             return None
@@ -1074,4 +1072,3 @@ def flip_flop(a, b):
     """ 接受两个generator a和b， 二者交替抛出op（a->b->a->b...），直到其中一个无法抛出op（None）， 忽略update """
     return FlipFlop(0, [a, b])
 
-# TODO GeneratorWrapperClass: Trace CycleTimes
