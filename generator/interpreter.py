@@ -137,9 +137,12 @@ class NemesisWorker(Worker):
 
 
 class ClientNemesisWorker(Worker):
+    def __init__(self, node_num):
+        self.node_num = node_num
+
     def open(self, id):
         if isinstance(id, int):
-            return ClientWorker(None, None, id)
+            return ClientWorker(None, None, id % self.node_num)
         else:
             return NemesisWorker()
 
@@ -150,8 +153,8 @@ class ClientNemesisWorker(Worker):
         return
 
 
-def client_nemesis_worker():
-    return ClientNemesisWorker()
+def client_nemesis_worker(node_num):
+    return ClientNemesisWorker(node_num)
 
 
 def spawn_worker(out: queue, worker, id) -> dict:
@@ -239,12 +242,12 @@ def run(test):
     :param test:
     :return: history
     """
-    # gen.init()
     ctx = gen.build_context(test)
     worker_ids = gen.get_all_threads(ctx)
     completions = queue.Queue(maxsize=len(worker_ids))
+    node_num = len(test['server'].keys())
     workers = list(map(
-        partial(spawn_worker, completions, client_nemesis_worker()),
+        partial(spawn_worker, completions, client_nemesis_worker(node_num)),
         worker_ids))
     invocations = {}
     for worker in workers:
