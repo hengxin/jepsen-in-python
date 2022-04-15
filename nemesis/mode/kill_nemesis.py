@@ -24,8 +24,7 @@ class kill_nemesis:
         self.clients[index].shutdown_db()
         self.clients[index] = None
         self.killed_index.append(index)
-        logging.info("killed db on client {}".format(hostname))
-        return {"type": "info", "f": "start", "value": "killed db on client {}".format(hostname), "process": "nemesis"}
+        return {"type": "info", "f": "start", "value": "killed db on client '{}'".format(hostname), "process": "nemesis"}
 
     def stop(self):
         # do noting

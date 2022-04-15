@@ -51,8 +51,10 @@ class nemesis:
     def start(self):
         if self.n:
             return self.n.start()
+        return {"type": "info", "f": "start", "value": "do nothing", "process": "nemesis"}
 
     def stop(self):
         if self.n:
             return self.n.stop()
+        return {"type": "info", "f": "stop", "value": "do nothing", "process": "nemesis"}
 

@@ -49,6 +49,7 @@ def operation(database_connection, history):
     except Exception as e:
         logging.error(traceback.format_exc())
         logging.error(repr(e))
+    finally:
         return {
             "type": "info",
             "f": function_name,
@@ -120,7 +121,7 @@ if __name__ == '__main__':
     nemesis_config = jepsen_config["nemesis"]
     checker_config = jepsen_config["checker"]
     logger = log({})  # 可传入日志的相关配置
-
+    jepsen_nemesis = None
     jepsen_clients = []
     try:
         # 1. 根据自己实际测试需要配置组装generator
@@ -130,24 +131,32 @@ if __name__ == '__main__':
             partial(gen.nemesis, gen.cycle([
                 gen.sleep(5),
                 {"type": "info", "f": "start"},
-                gen.sleep(5),
+                gen.sleep(10),
                 {"type": "info", "f": "stop"}
             ])),
             # partial(gen.nemesis, None),
-            partial(gen.time_limit, 30)
+            partial(gen.time_limit, 60)
         ])([read, write, cas])
 
         # 2. 创建所测试的分布式数据库节点对应的clients
         for node in server_config:
             new_client = client(server_config[node], etcd_database, database_config, operation)
             jepsen_clients.append(new_client)
-
         # 3. setup数据库
         for client in jepsen_clients:
             t = Thread(target=client.setup_db())
             t.start()
-        time.sleep(20)
-
+        is_running = False
+        retry = 10
+        while not is_running and retry > 0:
+            time.sleep(1)
+            is_running = True
+            for client in jepsen_clients:
+                is_running = is_running and (client.is_running())
+            retry -= 1
+        if retry <= 0:
+            logging.error("Error happened when set up database! Please check your setup function and server status!")
+            raise Exception("Error happened when set up database! Please check your setup function and server status!")
         # 4. 创建nemesis
         jepsen_nemesis = nemesis(jepsen_clients, nemesis_config)
 
@@ -168,8 +177,12 @@ if __name__ == '__main__':
 
         # 8. 调用knossos验证数据一致性
         jepsen_checker.check()
+
     finally:
+        if jepsen_nemesis:
+            jepsen_nemesis.stop()
         # 7. shutdown数据库
         for client in jepsen_clients:
             if client:
                 client.shutdown_db()
+

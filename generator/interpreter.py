@@ -105,13 +105,20 @@ class ClientWorker(Worker):
                 self.client = None
                 op_fail = op.copy()
                 op_fail.update({
-                    "type": "fail",
+                    "type": "info",
                     "error": traceback.format_exc() + " >> no client."
                 })
                 return op_fail
 
             # 使用新的client去执行op
             return self.invoke(op)
+        elif self.client is None:
+            op_fail = op.copy()
+            op_fail.update({
+                "type": "info",
+                "error": traceback.format_exc() + " >> no client."
+            })
+            return op_fail
         else:
             return self.client.operate(op)
 
@@ -198,7 +205,6 @@ def spawn_worker(out: queue, worker, id) -> dict:
                             logging.info("{} got op: {}".format(threading.current_thread().name, op))
                             result = _worker.invoke(op)
                             _out.put(result)
-                            # logging.info(str(result))
                             exit_flag = False
 
                 except Exception as e:

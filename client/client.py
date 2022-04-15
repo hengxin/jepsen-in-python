@@ -30,10 +30,21 @@ class client:
         else:
             pass
 
+    def is_running(self):
+        running = self.ssh_client.exec_command("ps -ef|grep etcd|grep -v grep|grep -v wget|awk '{print $2}'", return_result=True)
+        return len(running) >= 1
+
     def recover(self):
         t = Thread(target=self.setup_db())
         t.start()
-        time.sleep(20)
+        running = False
+        retry = 10
+        while not running and retry > 0:
+            time.sleep(1)
+            running = self.is_running()
+            retry -= 1
+        if retry <= 0:
+            return
         self.connect_db()
 
     def connect_db(self):

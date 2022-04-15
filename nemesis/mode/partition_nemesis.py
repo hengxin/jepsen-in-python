@@ -26,11 +26,11 @@ class partition_nemesis:
                 target_group.append(self.clients[i-1].hostname)
             self.clients[key-1].ssh_client.drop_all_net(target_group)
             logging.info("isolated [{}] and [{}]".format(self.clients[key - 1].hostname, ",".join(target_group)))
-        return {"type": "info", "f": "start", "value": "start partition nemesis with judge function {}".format(self.partition_method.__name__)}
+        return {"type": "info", "f": "start", "process": "nemesis", "value": "start partition nemesis with judge function {}".format(self.partition_method.__name__)}
 
     # 恢复网络
     def stop(self):
         for client in self.clients:
             client.ssh_client.heal_net()
             logging.info("healed netowrk of {}".format(client.hostname))
-        return {"type": "info", "f": "stop", "value": "stop partition nemesis with judge function {}".format(self.partition_method.__name__)}
+        return {"type": "info", "f": "stop", "process": "nemesis", "value": "stop partition nemesis with judge function {}".format(self.partition_method.__name__)}
