@@ -113,7 +113,6 @@ class etcd_database(database_op):
         return etcd3.client(host=self.hostname, port=self.port)
 
 
-
 if __name__ == '__main__':
     jepsen_config = util.read_config("config.yaml")
     server_config = jepsen_config["server"]
@@ -122,9 +121,22 @@ if __name__ == '__main__':
     checker_config = jepsen_config["checker"]
     logger = log({})  # 可传入日志的相关配置
 
-
     jepsen_clients = []
     try:
+        # 1. 根据自己实际测试需要配置组装generator
+        jepsen_config["generator"] = Pipeline([
+            gen.mix,
+            partial(gen.stagger, 1),
+            partial(gen.nemesis, gen.cycle([
+                gen.sleep(5),
+                {"type": "info", "f": "start"},
+                gen.sleep(5),
+                {"type": "info", "f": "stop"}
+            ])),
+            # partial(gen.nemesis, None),
+            partial(gen.time_limit, 30)
+        ])([read, write, cas])
+
         # 2. 创建所测试的分布式数据库节点对应的clients
         for node in server_config:
             new_client = client(server_config[node], etcd_database, database_config, operation)
@@ -142,19 +154,6 @@ if __name__ == '__main__':
         # 将初始化的clients和nemesis注入globalvars
         GlobalVars.set_clients(jepsen_clients)
         GlobalVars.set_nemesis(jepsen_nemesis)
-
-        # 1. 根据自己实际测试需要配置组装generator
-        jepsen_config["generator"] = Pipeline([
-            gen.mix,
-            # partial(gen.stagger, 1),
-            partial(gen.nemesis, gen.cycle([
-                gen.sleep(5),
-                {"type": "info", "f": "start"},
-                gen.sleep(5),
-                {"type": "info", "f": "stop"}
-            ])),
-            partial(gen.time_limit, 30)
-        ])([read, write, cas])
 
         # 5.1 运行generator，获得op结果日志（dict格式）
         op_exec_history = util.with_relative_time(

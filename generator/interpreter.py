@@ -202,7 +202,8 @@ def spawn_worker(out: queue, worker, id) -> dict:
                             exit_flag = False
 
                 except Exception as e:
-                    logging.warning(repr(e) + " >> Process {} crashed.".format(op['process']))
+                    logging.warning("{} {} >> Process {} crashed."
+                                    .format(threading.current_thread().name, repr(e), op['process']))
                     # 出错，更改op类型为info
                     op_info = op.copy()
                     op_info.update({
@@ -256,7 +257,7 @@ def run(test):
     invocations = {}
     for worker in workers:
         invocations[worker['id']] = worker['in']
-    gene = gen.validate(
+    generator = gen.validate(
         gen.friendly_exceptions(test['generator'])
     )
 
@@ -286,7 +287,7 @@ def run(test):
                 ctx['free-threads'].add(cur_thread)
 
                 logging.info("jepsen worker {} finished op: {}".format(cur_thread, finished_op))
-                gene = gen.update(gene, test, ctx, finished_op)
+                gene2 = gen.update(gene, test, ctx, finished_op)
 
                 if cur_thread == 'nemesis' or finished_op['type'] != 'info':
                     pass
@@ -296,7 +297,7 @@ def run(test):
                 if goes_in_history(finished_op):
                     history.append(finished_op)
                 # 记录历史并继续
-                return _run_recursive(ctx, gene, outstanding - 1, 0.0, history)
+                return _run_recursive(ctx, gene2, outstanding - 1, 0.0, history)
 
             else:
                 time_taken = util.compute_relative_time()
@@ -322,6 +323,7 @@ def run(test):
                         return history
                 else:
                     op_var, gene2 = res[0], res[1]
+                    # print(op_var)
                     if op_var == 'pending':
                         return _run_recursive(ctx, gene, outstanding,
                                               MAX_PENDING_INTERVAL, history)
@@ -329,7 +331,7 @@ def run(test):
                     else:  # 得到一个op invocation
                         # 时间未到，还不能处理
                         if time_taken < op_var['time']:
-                            # time.sleep(op_var['time'] - time_taken)
+                            # print("not ready")
                             return _run_recursive(ctx, gene, outstanding,
                                                   op_var['time'] - time_taken, history)
                         else:
@@ -346,7 +348,7 @@ def run(test):
 
                             return _run_recursive(ctx, gene2, outstanding + 1, 0.0, history)
 
-        return _run_recursive(ctx, gene, outstanding_0, poll_timeout_0, history_0)
+        return _run_recursive(ctx, generator, outstanding_0, poll_timeout_0, history_0)
 
     except Exception as e:
         logging.info("Shutting down workers after abnormal exit")
