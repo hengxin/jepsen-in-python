@@ -920,7 +920,6 @@ class Stagger(Generator):
             if op_var == 'pending':
                 return [op_var, this]  # 原样返回
             elif next_time <= op_var['time']:
-                op_var["time"] = max(op_var['time'], next_time)
                 return [op_var, Stagger(dt, (next_time + random.uniform(0, dt)), gen2)]
             else:
                 return ["pending", this]
