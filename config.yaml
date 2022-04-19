@@ -1,35 +1,8 @@
 database:
-#  initial_cluster: "42.192.52.249=http://42.192.52.249:2380,119.3.69.98=http://119.3.69.98:2380,public-cd-a3.disalg.cn=http://public-cd-a3.disalg.cn:2380,public-cd-a4.disalg.cn=http://public-cd-a4.disalg.cn:2380,public-cd-a5.disalg.cn=http://public-cd-a5.disalg.cn:2380"
-  #initial_cluster: "42.192.52.249=http://42.192.52.249:2380,119.3.69.98=http://119.3.69.98:2380"
-  initial_cluster: "public-cd-a4.disalg.cn=http://public-cd-a4.disalg.cn:2380,public-cd-a5.disalg.cn=http://public-cd-a5.disalg.cn:2380"
-  port: 2379
+
 
 server:
-#  client1:
-#    hostname: "119.3.69.98"
-#    port: 22
-#    username: "root"
-#    password: "T2419tzh"
-#  client2:
-#    hostname: "42.192.52.249"
-#    port: 22
-#    username: "root"
-#    password: "Asdf159753"
-#  client3:
-#    hostname: "public-cd-a3.disalg.cn"
-#    port: 22
-#    username: "leoyhwei"
-#    password: "Asdf159753"
-  client4:
-    hostname: "public-cd-a4.disalg.cn"
-    port: 22
-    username: "leoyhwei"
-    password: "Asdf159753"
-  client5:
-    hostname: "public-cd-a5.disalg.cn"
-    port: 22
-    username: "leoyhwei"
-    password: "Asdf159753"
+
 nemesis:
   # mode -- partition, clock, pause, kill, None
   mode: "pause"

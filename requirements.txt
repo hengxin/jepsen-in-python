@@ -1,4 +1,5 @@
 coloredlogs==15.0.1
 etcd3==0.12.0
+fastcore==1.4.1
 paramiko==2.9.2
-PyYAML~=6.0
+PyYAML==6.0
