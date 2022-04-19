@@ -10,8 +10,7 @@ class database_op:
     def __init__(self, ssh_client, hostname, config):
         self.ssh_client = ssh_client
         self.hostname = hostname
-        self.port = config["port"]
-        self.initial_cluster = config["initial_cluster"]
+        self.config = config
 
     def setup(self):
         pass
@@ -21,3 +20,9 @@ class database_op:
 
     def connect_database(self):
         pass
+
+    def disconnect_database(self):
+        pass
+
+    def is_running(self):
+        return True

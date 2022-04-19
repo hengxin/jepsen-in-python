@@ -46,10 +46,15 @@ def operation(database_connection, history):
                 "f": "cas",
                 "value": history["value"]
             }
+        else:
+            return {
+                "type": "info",
+                "f": function_name,
+                "value": None
+            }
     except Exception as e:
         logging.error(traceback.format_exc())
         logging.error(repr(e))
-    finally:
         return {
             "type": "info",
             "f": function_name,
@@ -82,6 +87,12 @@ def cas():
 
 
 class etcd_database(database_op):
+    def __init__(self, ssh_client, hostname, config):
+        super().__init__(ssh_client, hostname, config)
+        self.port = config["port"]
+        self.initial_cluster = config["initial_cluster"]
+        self.database_connection = None
+
     def setup(self):
         root_path = self.ssh_client.pwd() + "/tmp/"
         self.ssh_client.wget(url="https://storage.googleapis.com/etcd/v3.1.5/etcd-v3.1.5-linux-amd64.tar.gz")
@@ -111,15 +122,29 @@ class etcd_database(database_op):
         self.ssh_client.exec_sudo_command("rm -rf {}".format(root_path))
 
     def connect_database(self):
-        return etcd3.client(host=self.hostname, port=self.port)
+        self.database_connection = etcd3.client(host=self.hostname, port=self.port)
+
+    def disconnect_database(self):
+        if self.database_connection:
+            self.database_connection.close()
+            self.database_connection = None
+        else:
+            pass
+
+    def is_running(self):
+        running = self.ssh_client.exec_command("ps -ef|grep etcd|grep -v grep|grep -v wget|awk '{print $2}'",
+                                               return_result=True)
+        return len(running) >= 1
 
 
+database = etcd_database
 if __name__ == '__main__':
     jepsen_config = util.read_config("config.yaml")
     server_config = jepsen_config["server"]
     database_config = jepsen_config["database"]
     nemesis_config = jepsen_config["nemesis"]
     checker_config = jepsen_config["checker"]
+    jepsen_config["concurrency"] = len(server_config)
     logger = log({})  # 可传入日志的相关配置
     jepsen_nemesis = None
     jepsen_clients = []
@@ -128,26 +153,20 @@ if __name__ == '__main__':
         jepsen_config["generator"] = Pipeline([
             gen.mix,
             partial(gen.stagger, 1),
-            partial(gen.nemesis, gen.cycle([
-                gen.sleep(5),
-                {"type": "info", "f": "start"},
-                gen.sleep(10),
-                {"type": "info", "f": "stop"}
-            ])),
-            # partial(gen.nemesis, None),
-            partial(gen.time_limit, 60)
+            partial(gen.nemesis, None),
+            partial(gen.time_limit, 30)
         ])([read, write, cas])
 
         # 2. 创建所测试的分布式数据库节点对应的clients
         for node in server_config:
-            new_client = client(server_config[node], etcd_database, database_config, operation)
+            new_client = client(server_config[node], database, database_config, operation)
             jepsen_clients.append(new_client)
         # 3. setup数据库
         for client in jepsen_clients:
             t = Thread(target=client.setup_db())
             t.start()
         is_running = False
-        retry = 10
+        retry = 20
         while not is_running and retry > 0:
             time.sleep(1)
             is_running = True
@@ -157,6 +176,9 @@ if __name__ == '__main__':
         if retry <= 0:
             logging.error("Error happened when set up database! Please check your setup function and server status!")
             raise Exception("Error happened when set up database! Please check your setup function and server status!")
+        time.sleep(5)
+        for client in jepsen_clients:
+            client.connect_db()
         # 4. 创建nemesis
         jepsen_nemesis = nemesis(jepsen_clients, nemesis_config)
 
@@ -185,4 +207,3 @@ if __name__ == '__main__':
         for client in jepsen_clients:
             if client:
                 client.shutdown_db()
-
