@@ -144,7 +144,6 @@ if __name__ == '__main__':
     database_config = jepsen_config["database"]
     nemesis_config = jepsen_config["nemesis"]
     checker_config = jepsen_config["checker"]
-    jepsen_config["concurrency"] = len(server_config)
     logger = log({})  # 可传入日志的相关配置
     jepsen_nemesis = None
     jepsen_clients = []
