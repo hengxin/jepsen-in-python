@@ -53,5 +53,11 @@ class client:
 
     def operate(self, op):
         exec_op_response = self.operation(self.database.database_connection, op)
+        if not exec_op_response:
+            exec_op_response = {
+                "type": "info",
+                "f": op["f"],
+                "value": None
+                }
         exec_op_response["process"] = op["process"]
         return exec_op_response
