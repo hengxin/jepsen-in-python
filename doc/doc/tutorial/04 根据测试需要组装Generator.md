@@ -1,9 +1,6 @@
 # 04 根据测试需要配置组装Generator
 
-### 写在前面
-
-------
-
+## 写在前面
 Generator模块是Jepsen五大模块之一，主要职责为生成对数据库的操作operations（读、写、比较并交换等，以下简称**op**）交予：
 
 1. Client模块对应的DB节点执行
@@ -15,10 +12,7 @@ Generator模块是Jepsen五大模块之一，主要职责为生成对数据库�
 
 接下来，教程将对常用的一些Generator作一个简单介绍（详细信息可以查看generator.py源码注释），并在最后将给出一个组装使用Generator的参考例子。
 
-### 什么是一个generator
-
-------
-
+## 什么是一个generator
 一个generator具备两个基本的方法，它们都是函数式的：
 
 ```python
@@ -51,7 +45,7 @@ Generator模块是Jepsen五大模块之一，主要职责为生成对数据库�
 
 
 
-### 常用的generator简介
+## 常用的generator简介
 
 #### Mix
 
@@ -143,7 +137,7 @@ gen.flip_flop(a, b)
 
 
 
-### 如何组装
+## 如何组装
 
 在Pyjepsen.py中，通过以下方式来组装你的generator
 
