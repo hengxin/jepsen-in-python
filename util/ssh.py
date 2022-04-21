@@ -40,7 +40,7 @@ class ssh_client:
             i = stdout.readline()
             if print:
                 logging.warning(i)
-        logging.info("{} completed!".format(full_command))
+        logging.debug("{} completed!".format(full_command))
         if return_result:
             return results
 
@@ -57,7 +57,7 @@ class ssh_client:
             i = stdout.readline()
             if print:
                 logging.warning(i)
-        logging.info("{} completed!".format(full_command))
+        logging.debug("{} completed!".format(full_command))
         if return_result:
             return results
 

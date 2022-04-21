@@ -25,6 +25,7 @@ class clock_nemesis:
             now_time = datetime.datetime.strptime(self.clients[i].ssh_client.get_time(), "%a %b %d %H:%M:%S %Y")
             new_time = now_time + datetime.timedelta(seconds=self.step * (i - half))
             self.clients[i].ssh_client.set_time(new_time)
+        logging.info("changed the time of the all clients")
         return {"type": "info", "f": "start", "value": "changed the time of the all clients", "process": "nemesis"}
 
     # 恢复每个服务器的时间

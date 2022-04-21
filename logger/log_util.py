@@ -10,24 +10,23 @@ import coloredlogs
 
 
 class log:
-    def __init__(self, option):
-        self.option = option
+    def __init__(self, level=logging.INFO):
         self.history_file = "histories/history-{}.edn".format(time.time())
         self.log_file = "logs/logger-{}.logger".format(time.time())
         logger = logging.getLogger()
         fmt = "[%(asctime)s] [%(levelname)s] [%(filename)s:%(funcName)s:%(lineno)s] %(message)s"
         formatter = logging.Formatter(fmt)
         ch = logging.StreamHandler()
-        ch.setLevel(logging.INFO)
+        ch.setLevel(level)
         ch.setFormatter(formatter)
         logger.addHandler(ch)
         fh = TimedRotatingFileHandler(self.log_file, encoding='utf-8')
-        fh.setLevel(logging.INFO)
+        fh.setLevel(level)
         fh.setFormatter(formatter)
-        logger.setLevel(logging.INFO)
+        logger.setLevel(level)
         logger.addHandler(fh)
         coloredlogs.install(fmt=fmt,
-                            level=logging.INFO,
+                            level=level,
                             logger=logger)
 
     def write_history(self, histories):

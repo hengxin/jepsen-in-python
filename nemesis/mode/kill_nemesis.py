@@ -28,4 +28,5 @@ class kill_nemesis:
 
     def stop(self):
         # do noting
+        logging.info("stop kill nemesis but nothing should be done")
         return {"type": "info", "f": "stop", "value": "do nothing", "process": "nemesis"}

@@ -1,11 +1,12 @@
 # 认识Pyjepsen
 
-欢迎使用本分布式测试框架，本框架是对Jepsen测试框架的一个Python语言的翻译版本
-Jepsen测试框架源代码仓库: https://github.com/jepsen-io/jepsen
+ 欢迎使用本分布式测试框架，本框架是对Jepsen测试框架的一个Python语言的翻译版本   
+ Jepsen测试框架源代码仓库: https://github.com/jepsen-io/jepsen  
+ 本项目需要3.10及以上版本python
 
 ## 本项目基本结构
-本项目以pyjepsen.py为项目的主入口
-本项目的特性控制主要依靠配置文件进行实现
+ 本项目以pyjepsen.py为项目的主入口  
+ 本项目的特性控制主要依靠配置文件进行实现  
 ```
 │ pyjepsen.py # 本项目主入口
 │ config.yaml # 本项目配置文件

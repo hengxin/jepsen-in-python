@@ -22,21 +22,24 @@ from generator import generator as gen, interpreter as gen_inter
 from util.globalvars import GlobalVars
 
 
-def test(generator, database, operation):
+def test(generator=None, database=database_op, operation=None):
     jepsen_config = util.read_config("config.yaml")
     server_config = jepsen_config["server"]
     database_config = jepsen_config["database"]
     nemesis_config = jepsen_config["nemesis"]
     checker_config = jepsen_config["checker"]
     jepsen_config["generator"] = generator
-    logger = log({})  # 可传入日志的相关配置
+    logger = log()  # 可传入日志的相关配置
     jepsen_nemesis = None
     jepsen_clients = []
     try:
+        logging.info("start connect to server")
         # 2. 创建所测试的分布式数据库节点对应的clients
         for node in server_config:
             new_client = client(server_config[node], database, database_config, operation)
             jepsen_clients.append(new_client)
+        logging.info("connect to all servers successfully!")
+        logging.info("start set up database on servers")
         # 3. setup数据库
         for jepsen_client in jepsen_clients:
             t = Thread(target=jepsen_client.setup_db())
@@ -53,6 +56,7 @@ def test(generator, database, operation):
             logging.error("Error happened when set up database! Please check your setup function and server status!")
             raise Exception("Error happened when set up database! Please check your setup function and server status!")
         time.sleep(5)
+        logging.info("start database on servers successfully!")
         for jepsen_client in jepsen_clients:
             jepsen_client.connect_db()
         # 4. 创建nemesis
@@ -76,13 +80,17 @@ def test(generator, database, operation):
         # 8. 调用knossos验证数据一致性
         jepsen_checker.check()
 
+
     finally:
+        logging.info("start shut down database and heal nemesis")
         if jepsen_nemesis:
             jepsen_nemesis.stop()
         # 7. shutdown数据库
         for jepsen_client in jepsen_clients:
             if jepsen_client:
                 jepsen_client.shutdown_db()
+        logging.info("shut down database and heal nemesis successfully!")
+        logging.info("Everything looks good! ヽ(‘ー`)ノ")
 
 
 if __name__ == '__main__':
@@ -199,8 +207,8 @@ if __name__ == '__main__':
     # 1. 根据自己实际测试需要配置组装generator
     generator = Pipeline([
         gen.mix,
-        # partial(gen.stagger, 1),
+        partial(gen.stagger, 1),
         partial(gen.nemesis, None),
-        partial(gen.time_limit, 30)
+        partial(gen.time_limit, 10)
     ])([read, write, cas])
     test(generator=generator, database=etcd_database, operation=operation)

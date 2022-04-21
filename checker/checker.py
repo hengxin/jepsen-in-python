@@ -3,6 +3,7 @@
 # @Author  : jiangnanweishao999
 # @Email   : 2764065464@qq.com
 # @File    : checker.py
+import logging
 import os
 
 
@@ -22,6 +23,7 @@ class checker:
         pass
 
     def check(self):
+        logging.info("check the history in model: {} and algorithm: {}".format(self.models, self.algos))
         result = os.popen(
             "java -jar ./bin/knossos-0.3.9-SNAPSHOT-standalone.jar --model {} --algorithm {} {}".format(self.models,
                                                                                                         self.algos,

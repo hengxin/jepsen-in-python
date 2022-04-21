@@ -21,9 +21,11 @@ class client:
         self.database = database_op(self.ssh_client, self.hostname, database_config)
 
     def setup_db(self):
+        logging.info("installing database on {}".format(self.hostname))
         return self.database.setup
 
     def shutdown_db(self):
+        logging.info("tearing down database on {}".format(self.hostname))
         if self.database:
             self.database.shutdown()
         else:
@@ -33,6 +35,7 @@ class client:
         return self.database.is_running()
 
     def recover(self):
+        logging.info("start recover database on {}".format(self.hostname))
         t = Thread(target=self.setup_db())
         t.start()
         running = False
