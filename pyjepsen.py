@@ -22,9 +22,6 @@ from generator import generator as gen, interpreter as gen_inter
 from util.globalvars import GlobalVars
 
 
-
-
-
 def test(generator, database, operation):
     jepsen_config = util.read_config("config.yaml")
     server_config = jepsen_config["server"]
@@ -86,7 +83,6 @@ def test(generator, database, operation):
         for jepsen_client in jepsen_clients:
             if jepsen_client:
                 jepsen_client.shutdown_db()
-    pass
 
 
 if __name__ == '__main__':
