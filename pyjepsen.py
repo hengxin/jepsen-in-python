@@ -46,12 +46,6 @@ def operation(database_connection, history):
                 "f": "cas",
                 "value": history["value"]
             }
-        else:
-            return {
-                "type": "info",
-                "f": function_name,
-                "value": None
-            }
     except Exception as e:
         logging.error(traceback.format_exc())
         logging.error(repr(e))
