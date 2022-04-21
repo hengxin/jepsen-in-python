@@ -13,7 +13,15 @@ from builtins import map as map_builtin, filter as filter_builtin, any as any_bu
 from abc import ABC, abstractmethod
 
 
-def update(gen, test, context, event):
+def update(gen, test: dict, context: dict, event):
+    """
+    :param gen: 一个generator对象
+    :param test: 传入的本次测试配置（来自config.yaml）
+    :param context: 测试运行时的上下文，包括当前空闲线程、时间等信息
+    :param event: 事件，通常是一个op
+    :return: gen2: 通过该次调用传入的generator的状态得到了更新，返回更新后的generator
+    """
+
     if gen is None:
         return None
     elif isfunction(gen):
@@ -30,7 +38,16 @@ def update(gen, test, context, event):
         return gen.update(gen, test, context, event)
 
 
-def op(gen, test, context):
+def op(gen, test: dict, context: dict):
+    """
+    :param gen: 一个generator对象
+    :param test: 传入的本次测试配置（来自config.yaml）
+    :param context: 测试运行时的上下文，包括当前空闲线程、时间等信息
+    :return: None: 该generator的生命已经结束，无法再扔出op
+    		 或者
+    		[op, gen2]: 所生成的op以及新状态的generator
+    """
+
     if gen is None:
         return None
     elif isfunction(gen):
@@ -59,22 +76,11 @@ def op(gen, test, context):
 class Generator(ABC):
     @abstractmethod
     def update(self, gen, test, context, event):
-        """
-        :param gen:
-        :param test:
-        :param context:
-        :param event:
-        :return: gen2
-        """
+        """ 子类必须实现 """
 
     @abstractmethod
     def op(self, gen, test, context):
-        """
-        :param gen:
-        :param test:
-        :param context:
-        :return: None or [op, gen2]
-        """
+        """ 子类必须实现 """
 
     def __str__(self):
         return repr(self) + "\nAttrs: " + pprint.pformat(self.__dict__, indent=2)
@@ -1073,4 +1079,3 @@ class FlipFlop(Generator):
 def flip_flop(a, b):
     """ 接受两个generator a和b， 二者交替抛出op（a->b->a->b...），直到其中一个无法抛出op（None）， 忽略update """
     return FlipFlop(0, [a, b])
-

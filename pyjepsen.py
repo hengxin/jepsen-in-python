@@ -146,8 +146,12 @@ if __name__ == '__main__':
         jepsen_config["generator"] = Pipeline([
             gen.mix,
             partial(gen.stagger, 1),
-            # partial(gen.delay, 1),
-            partial(gen.nemesis, None),
+            partial(gen.nemesis, gen.cycle([
+                gen.sleep(5),
+                {"type": "info", "f": "start"},
+                gen.sleep(5),
+                {"type": "info", "f": "stop"}
+            ])),
             partial(gen.time_limit, 30)
         ])([read, write, cas])
 
