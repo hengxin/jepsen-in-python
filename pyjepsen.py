@@ -80,7 +80,7 @@ def test(generator=None, database=database_op, operation=None):
 
         # 8. 调用knossos验证数据一致性
         jepsen_checker.check()
-
+        logging.info("Everything looks good! ヽ(‘ー`)ノ")
 
     finally:
         logging.info("start shut down database and heal nemesis")
@@ -91,7 +91,7 @@ def test(generator=None, database=database_op, operation=None):
             if jepsen_client:
                 jepsen_client.shutdown_db()
         logging.info("shut down database and heal nemesis successfully!")
-        logging.info("Everything looks good! ヽ(‘ー`)ノ")
+
 
 
 if __name__ == '__main__':
