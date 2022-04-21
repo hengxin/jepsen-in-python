@@ -973,7 +973,7 @@ def delay(dt, gen):
 
 
 def sleep(dt):
-    """ 一个特殊的op，使接收到它的process睡眠dt秒 """
+    """ 一个特殊的op，使接收到它的线程睡眠dt秒 """
     return {
         "type": "sleep",
         "value": float(dt)
