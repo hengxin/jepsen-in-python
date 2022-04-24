@@ -44,10 +44,10 @@ Generator模块是Jepsen五大模块之一，主要职责为生成对数据库�
 
 除了在generator.py源码中显式继承自Generator抽象类的子类外，部分python基本数据类型也算作一个generator：
 
-- **字面量 None：**op方法、update方法均返回None。
-- **字典 dict：**调用op方法返回自身*（注：会补充一些运行时字段）*；忽略update方法。（在这种情况下，generator就是一个op）
-- **函数 function：**该函数（记为**f**）需要接收0或2个参数，若**f()**或**f(test, context)**的调用结果（记为res）不为None，则再次调用并返回op([res, gen], test, context)，否则返回None；忽略update方法。
-- **列表 list：**该列表调用op方法，列表中第一个generator调用op方法，若结果不为None，返回生成的op、新状态的generator、列表中剩下的generator所组成的列表，否则摒弃掉该元素则再次调用并返回op(gen[1:], test, context)；update方法仅更新list中第一个元素，返回该列表。
+- **字面量 None：** op方法、update方法均返回None。
+- **字典 dict：** 调用op方法返回自身*（注：会补充一些运行时字段）*；忽略update方法。（在这种情况下，generator就是一个op）
+- **函数 function：** 该函数（记为**f**）需要接收0或2个参数，若**f()**或**f(test, context)**的调用结果（记为res）不为None，则再次调用并返回op([res, gen], test, context)，否则返回None；忽略update方法。
+- **列表 list：** 该列表调用op方法，列表中第一个generator调用op方法，若结果不为None，返回生成的op、新状态的generator、列表中剩下的generator所组成的列表，否则摒弃掉该元素则再次调用并返回op(gen[1:], test, context)；update方法仅更新list中第一个元素，返回该列表。
 
 
 
