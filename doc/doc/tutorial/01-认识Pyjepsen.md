@@ -13,15 +13,14 @@
 │ README.md # 本项目介绍
 │ requirements.txt # 本项目依赖
 ├─bin # 可执行文件，用于checker调用
-├─checker # checker模块，检验运行结果
-├─client # client模块，控制对服务器操作
-├─db # db模块，控制数据库操作
 ├─doc # 相关文档
-├─generator # generator模块，生成操作
-├─histories # 保存记录操作历史的文件
-├─logger # logger模块，负责日志和文件读写功能
-├─logs # 保存日志文件
-├─nemesis # nemesis模块，为数据库操作注入错误
 ├─util # 公用方法
-
+├─histories # 保存记录操作历史的文件
+├─logs # 保存日志文件
+├─checker # checker模块，用于检验运行结果
+├─client # client模块，用于控制对服务器操作
+├─db # db模块，用于控制数据库操作
+├─generator # generator模块，用于生成操作
+├─logger # logger模块，负责日志和文件读写功能
+├─nemesis # nemesis模块，为数据库操作注入错误
 ```
