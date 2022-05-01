@@ -16,6 +16,11 @@ class log:
         logger = logging.getLogger()
         fmt = "[%(asctime)s] [%(levelname)s] [%(filename)s:%(funcName)s:%(lineno)s] %(message)s"
         formatter = logging.Formatter(fmt)
+        coloredlogs.DEFAULT_FIELD_STYLES = {'asctime': {'color': 'green'},
+                                            'message': {'color':  'cyan'},
+                                            'levelname': {'color': 'green', 'bold': True},
+                                            'filename': {'color': 'magenta'},
+                                            }
         ch = logging.StreamHandler()
         ch.setLevel(level)
         ch.setFormatter(formatter)
