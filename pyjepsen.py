@@ -207,9 +207,8 @@ if __name__ == '__main__':
     #
     # # 1. 根据自己实际测试需要配置组装generator
     # generator = Pipeline([
-    #     gen.mix,
     #     partial(gen.stagger, 1),
     #     partial(gen.nemesis, None),
     #     partial(gen.time_limit, 10)
-    # ])([read, write, cas])
-    test(generator=None, database=database_op, operation=None)
+    # ])(gen.mix([read, write, cas]))
+    test(generator=None, database=None, operation=None)

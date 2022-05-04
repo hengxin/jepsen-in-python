@@ -201,7 +201,7 @@ def spawn_worker(out: queue, worker, id) -> dict:
                             logging.info(op['value'])
                             _out.put(op)
                             exit_flag = False
-                        case _:  # invoke, info, fail
+                        case _:  # invoke
                             logging.info("{} got op: {}".format(threading.current_thread().name, op))
                             result = _worker.invoke(op)
                             _out.put(result)

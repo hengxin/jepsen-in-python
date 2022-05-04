@@ -189,10 +189,10 @@ gen.flip_flop(a, b)
 
 ```python
 Pipeline([
-	gen.gen1_,
 	partial(gen.gen2_(args2)),
 	partial(gen.gen3_(args3)),
-])(args1)
+        ...
+])(gen.gen1_(args1))
 ```
 
 *（使用第三方库fastcore.transfrom.Pipeline来实现类似于clojure **->>** 关键字的函数管道式调用效果，否则组装将 ”嵌套地狱 ”）*
@@ -201,7 +201,6 @@ Pipeline([
 
 ```python
 generator = Pipeline([
-    gen.mix,
     partial(gen.stagger, 1),
     partial(gen.nemesis, gen.cycle([
         gen.sleep(5),
@@ -210,7 +209,7 @@ generator = Pipeline([
         {"type": "info", "f": "stop"}
     ])),
     partial(gen.time_limit, 30)
-])([read, write, cas])
+])(gen.mix([read, write, cas]))
 
 # 其中read, write, cas为用户定义的针对数据库的读写CAS操作函数
 ```
