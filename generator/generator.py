@@ -610,13 +610,12 @@ def soonest_op_dict(d1, d2) -> dict:
     if t1 == t2:
         w1, w2 = d1.get("weight") or 1, d2.get("weight") or 1
         w = w1 + w2
-        if random.randint(0, w) < w1:
+        if random.randint(0, w-1) < w1:
             d1["weight"] = w
             return d1
         else:
             d2["weight"] = w
             return d2
-
     elif t1 < t2:
         return d1
     else:
