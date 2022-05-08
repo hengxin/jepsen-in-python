@@ -837,7 +837,7 @@ class ProcessLimit(Generator):
             if op_var == 'pending':
                 return [op_var, ProcessLimit(n, processes, gen2)]
             else:
-                processes2 = processes | set(get_all_processes(context))
+                processes2 = set(get_all_processes(context)) - set(get_free_processes(context))
                 if len(processes2) <= n:
                     return [op_var, ProcessLimit(n, processes2, gen2)]
                 else:
