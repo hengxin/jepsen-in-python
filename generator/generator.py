@@ -154,9 +154,14 @@ def fill_in_op(op, context):
     """ 使用context填补op缺失的键值对字段 type, process, time """
     p = get_some_free_process(context)
     if p == "nemesis" or p >= 0:
-        if op.get("time") is None: op["time"] = context["time"]
-        if op.get("process") is None: op["process"] = p
-        if op.get("type") is None: op["type"] = "invoke"
+        if op.get("time") is None:
+            op["time"] = context["time"]
+        if op.get("process") is None:
+            op["process"] = p
+        if op.get("type") is None:
+            op["type"] = "invoke"
+        if op.get("process") and op["process"] == "nemesis":
+            op["time"] = context["time"]
         return op
     else:
         return "pending"
@@ -181,22 +186,22 @@ class Validate(Generator):
                     pass
                 else:
                     if not isinstance(op_var, dict):
-                        problems.append("op value should be 'pending' or a dict")
+                        problems.append("op value should be 'pending' or a dict\n")
                     if op_var['type'] not in ['invoke', 'info', 'sleep', 'log']:
-                        problems.append("type value should be 'invoke', 'info', 'sleep' or 'log'")
+                        problems.append("type value should be 'invoke', 'info', 'sleep' or 'log'\n")
                     if not isinstance(op_var['time'], float):
-                        problems.append("time value should be a float")
+                        problems.append("time value should be a float\n")
                     if op_var['process'] is None:
-                        problems.append("no process")
+                        problems.append("no process\n")
                     if op_var['process'] is not None and op_var['process'] not in get_free_processes(context):
-                        problems.append("process {} is not free".format(op_var['process']))
+                        problems.append("process {} is not free\n".format(op_var['process']))
 
             if problems:
                 errmsg = "Generator produced an invalid [op, gen\'] list when asked for an operation:{}" \
                          "\nThe specific issues are as follows:\n" \
                     .format(res)
                 for problem in problems:
-                    errmsg += "  -{}".format(problem)
+                    errmsg += "  - {}".format(problem)
                 errmsg += "Generator:{}\n" \
                           "Context:{}\n" \
                     .format(gen, pprint.pformat(context, indent=2))
@@ -229,7 +234,7 @@ class FriendlyExceptions(Generator):
             errmsg = "Generator threw {} when asked for an operation\n" \
                      "Generator:{}\n" \
                      "Context:{}\n" \
-                .format(repr(e), self.gen.gen if self.gen else "None",
+                .format(repr(e), self.gen if self.gen else "None",
                         pprint.pformat(context, indent=2).replace('\'', ''))
             raise Exception(errmsg)
 
@@ -533,7 +538,7 @@ class Reserve(Generator):
             }
 
         soonest = reduce(soonest_op_dict,
-                         list(map_builtin(fn, enumerate(ranges))) + [rt_default],
+                         list(map_builtin(fn, range(len(ranges)), ranges)) + [rt_default],
                          None)
         if soonest:
             gens[soonest["i"]] = soonest["gen2"]
@@ -546,17 +551,20 @@ class Reserve(Generator):
         """ update传播到持有这个thread的generator """
         process = event["process"]
         thread = process2thread(context, process)
+        # print("process: {}, thread: {}".format(process, thread))
 
         # 返回产生这个event的generator的索引
-        def fn():
-            for i, _range in enumerate(self.ranges):
+        def fn(ranges):
+            for i, _range in enumerate(ranges):
                 if thread in _range:
                     return i
+            return len(ranges)
 
-        index = fn()
+        index = fn(self.ranges)
+        self.gens[index] = update(self.gens[index], test, context, event)
         return Reserve(self.ranges,
                        self.all_ranges,
-                       update(self.gens[index], test, context, event))
+                       self.gens)
 
 
 def reserve(*args):
@@ -582,6 +590,8 @@ def reserve(*args):
         pre = n
     gens.append(default_gen)
     all_ranges = set().union(*ranges)
+    # print("ranges: {}".format(ranges))
+    # print("all_ranges: {}".format(all_ranges))
     return Reserve(ranges, all_ranges, gens)
 
 
