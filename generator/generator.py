@@ -454,7 +454,7 @@ class EachThread(Generator):
 
         soonest = reduce(soonest_op_dict,
                          filter_builtin(None, map_builtin(_op, free)),
-                         initial=None)
+                         None)
 
         if soonest:
             # 一个空闲线程有op
@@ -534,7 +534,7 @@ class Reserve(Generator):
 
         soonest = reduce(soonest_op_dict,
                          list(map_builtin(fn, enumerate(ranges))) + [rt_default],
-                         initial=None)
+                         None)
         if soonest:
             gens[soonest["i"]] = soonest["gen2"]
             return [soonest["op"],
