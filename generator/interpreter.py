@@ -17,8 +17,12 @@ import concurrent.futures
 import queue
 import generator.generator as gen
 import util.util as util
+import client.client as cli
 from abc import ABC, abstractmethod
 from util.globalvars import GlobalVars
+# import sys
+# sys.path.append("..")
+# from test import TestInterpreter
 
 """
 When the generator is :pending, this controls the maximum interval before
@@ -83,13 +87,17 @@ class ClientWorker(Worker):
 
     def open(self, id):
         clis = GlobalVars.get_clients()
-        self.client = clis[id]
+
+        # 拷贝构造
+        self.client = cli.client()
+        for k, v in vars(clis[id]).items():
+            setattr(self.client, k, v)
+        clis[id] = self.client
         self.id = id
         self.client.connect_db()
-        return self
+        return self.client
 
     def invoke(self, op):
-        clis = GlobalVars.get_clients()
         if self.process != op['process']:
             # 说明thread发生崩溃，分配了新的process
             # 关闭当前ClientWorker并创建新的
@@ -98,7 +106,7 @@ class ClientWorker(Worker):
             # 尝试打开新的client
             try:
                 self.process = op['process']
-                self.client = clis[self.id]
+                self.client = self.open(self.id)
                 self.client.connect_db()
             except Exception as e:
                 logging.warning("jepsen worker {} {}  >> Error opening client.".format(str(self.id), repr(e)))
@@ -137,11 +145,7 @@ class NemesisWorker(Worker):
         return self
 
     def invoke(self, op):
-        f = op["f"]
-        if f == "start":
-            return self.nemesis.start()
-        elif f == "stop":
-            return self.nemesis.stop()
+        return getattr(self.nemesis, op["f"])()
 
     def close(self):
         return

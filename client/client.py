@@ -11,14 +11,15 @@ from threading import Thread
 
 
 class client:
-    def __init__(self, node, database_op, database_config, operation):
-        self.hostname = node["hostname"]
-        self.port = node["port"]
-        self.username = node["username"]
-        self.passwd = node["password"]
-        self.operation = operation
-        self.ssh_client = ssh_client(self.hostname, self.port, self.username, self.passwd)
-        self.database = database_op(self.ssh_client, self.hostname, database_config)
+    def __init__(self, node=None, database_op=None, database_config=None, operation=None):
+        if node and database_op and database_config and operation:
+            self.hostname = node["hostname"]
+            self.port = node["port"]
+            self.username = node["username"]
+            self.passwd = node["password"]
+            self.operation = operation
+            self.ssh_client = ssh_client(self.hostname, self.port, self.username, self.passwd)
+            self.database = database_op(self.ssh_client, self.hostname, database_config)
 
     def setup_db(self):
         logging.info("installing database on {}".format(self.hostname))

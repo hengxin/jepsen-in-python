@@ -11,6 +11,10 @@ from functools import partial
 
 class TestInterpreter:
     class StubClient:
+        def __init__(self, a=None, b=None):
+            self.a = a
+            self.b = b
+
         def setup_db(self):
             return
 
@@ -41,6 +45,9 @@ class TestInterpreter:
 
         def stop(self):
             return {"type": "info", "f": "stop", "value": "stop nemesis", "process": "nemesis"}
+
+        def recover(self):
+            return {"type": "info", "f": "recover", "value": "recover", "process": "nemesis"}
 
     def test_run(self):
         config = {
@@ -82,6 +89,11 @@ class TestInterpreter:
                 5, lambda: {"f": "cas", "value": [random.randint(0, 5), random.randint(0, 5)]},
                 gen.repeat({"f": "read"})
             )),
+            gen.log("Recovering"),
+            gen.nemesis({"type": "info", "f": "recover"}),
+            gen.sleep(0.1),
+            gen.log("Done, final read"),
+            gen.clients(gen.until_ok(gen.repeat({"f": "read"})))
         )
 
         """ test generator 2 """
@@ -120,7 +132,7 @@ class TestInterpreter:
         # pprint.pprint(client_ops)
         # pprint.pprint(nemesis_ops)
 
-        # 经测试，generator 1 大约 5k/sec, test generator 2 大约7.5k/sec
+        # 经测试，generator 1 大约 5k/sec, generator 2 大约7.5k/sec
         # 根据机器性能不同可能会有浮动
         print("total ops: {}, client ops: {}, nemesis ops: {}".format(
             len(history),

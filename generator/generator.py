@@ -94,13 +94,15 @@ class Generator(ABC):
 def build_context(test):
     """ 通过test构建context """
     threads = ["nemesis"] + list(range(test['concurrency']))
-    threads = set(threads)  # TODO: 原实现中使用了bifurcan包的Set（其提供高效率的nth），具体区别待验证
+    threads = set(threads)
 
-    return {
+    context = {
         "time": 0,
         "free-threads": threads,
         "workers": dict(zip(threads, threads))
     }
+
+    return context
 
 
 def get_free_processes(context):
@@ -1049,15 +1051,15 @@ class UntilOk(Generator):
         if p in active_processes:
             match event["type"]:
                 case "ok":
-                    return UntilOk(gen2, True, active_processes - p)
+                    return UntilOk(gen2, True, active_processes - {p})
                 # crashed
                 case "info":
-                    return UntilOk(gen2, done, active_processes - p)
+                    return UntilOk(gen2, done, active_processes - {p})
                 # failed
                 case "fail":
-                    return UntilOk(gen2, done, active_processes - p)
+                    return UntilOk(gen2, done, active_processes - {p})
                 case _:
-                    raise Exception("Unknown type value:{}", event["type"])
+                    return UntilOk(gen2, done, active_processes)
         else:
             return UntilOk(gen2, done, active_processes)
 
