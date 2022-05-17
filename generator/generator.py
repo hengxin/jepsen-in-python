@@ -73,7 +73,17 @@ def op(gen, test: dict, context: dict):
         return gen.op(gen, test, context)
 
 
-class Generator(ABC):
+class AttrDisplay:
+    def gather_attrs(self):
+        return ", ".join("{}: {}"
+                      .format(k, getattr(self, k))
+                      for k in self.__dict__.keys())
+
+    def __str__(self):
+        return "({}: {})".format(self.__class__.__name__, self.gather_attrs())
+
+
+class Generator(ABC, AttrDisplay):
     @abstractmethod
     def update(self, gen, test, context, event):
         """ 子类必须实现 """
@@ -81,9 +91,6 @@ class Generator(ABC):
     @abstractmethod
     def op(self, gen, test, context):
         """ 子类必须实现 """
-
-    def __str__(self):
-        return repr(self) + "\nAttrs: " + pprint.pformat(self.__dict__, indent=2)
 
 
 '''
@@ -622,7 +629,7 @@ def soonest_op_dict(d1, d2) -> dict:
     if t1 == t2:
         w1, w2 = d1.get("weight") or 1, d2.get("weight") or 1
         w = w1 + w2
-        if random.randint(0, w-1) < w1:
+        if random.randint(0, w - 1) < w1:
             d1["weight"] = w
             return d1
         else:
