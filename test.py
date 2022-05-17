@@ -93,7 +93,7 @@ class TestInterpreter:
             gen.nemesis({"type": "info", "f": "recover"}),
             gen.sleep(0.1),
             gen.log("Done, final read"),
-            gen.clients(gen.until_ok(gen.repeat({"f": "read"})))
+            gen.clients(gen.until_ok(lambda: {"f": "read"}))
         )
 
         """ test generator 2 """

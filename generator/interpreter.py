@@ -20,9 +20,8 @@ import util.util as util
 import client.client as cli
 from abc import ABC, abstractmethod
 from util.globalvars import GlobalVars
-# import sys
-# sys.path.append("..")
-# from test import TestInterpreter
+
+# logging.basicConfig(level=logging.INFO)
 
 """
 When the generator is :pending, this controls the maximum interval before
@@ -93,6 +92,10 @@ class ClientWorker(Worker):
         for k, v in vars(clis[id]).items():
             setattr(self.client, k, v)
         clis[id] = self.client
+
+        # 还是使用旧的 -- 感觉不太对
+        # self.client = clis[id]
+
         self.id = id
         self.client.connect_db()
         return self.client
