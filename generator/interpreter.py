@@ -102,7 +102,7 @@ class ClientWorker(Worker):
 
     def invoke(self, op):
         if self.process != op['process']:
-            # 说明thread发生崩溃，分配了新的process
+            # 说明client处理时发生异常，分配了新的process
             # 关闭当前ClientWorker并创建新的
             self.close()
 
@@ -114,22 +114,22 @@ class ClientWorker(Worker):
             except Exception as e:
                 logging.warning("jepsen worker {} {}  >> Error opening client.".format(str(self.id), repr(e)))
                 self.client = None
-                op_fail = op.copy()
-                op_fail.update({
+                op_info = op.copy()
+                op_info.update({
                     "type": "info",
                     "error": traceback.format_exc() + " >> no client."
                 })
-                return op_fail
+                return op_info
 
             # 使用新的client去执行op
             return self.invoke(op)
         elif self.client is None:
-            op_fail = op.copy()
-            op_fail.update({
+            op_info = op.copy()
+            op_info.update({
                 "type": "info",
                 "error": traceback.format_exc() + " >> no client."
             })
-            return op_fail
+            return op_info
         else:
             return self.client.operate(op)
 
@@ -304,7 +304,7 @@ def run(test):
 
                 if cur_thread == 'nemesis' or finished_op['type'] != 'info':
                     pass
-                else:  # 崩溃的线程（不包括nemesis线程）应该分配新的标识符
+                else:  # client处理数据库请求出异常，此时应该分配新的标识符
                     ctx['workers'][cur_thread] = gen.next_process(ctx, cur_thread)
 
                 if goes_in_history(finished_op):
